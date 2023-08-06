@@ -1,0 +1,97 @@
+.left-divider, .right-divider {
+  padding: 20px;
+  background-color: #f0f0f0;
+  min-height: 100vh;
+}
+.middle-section {
+  padding: 20px;
+  background-color: #dddddd;
+  min-height: 100vh;
+}
+.company-logo {
+  text-align: center;
+  padding: 10px 0;
+}
+.company-logo img {
+  max-width: 80px;
+  height: auto;
+}
+.folder-sections {
+  margin-top: 20px;
+}
+.folder-icon, .file-icon {
+  margin-right: 10px;
+}
+.search-bar {
+  margin-bottom: 20px;
+}
+.divider {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-top: 1px solid #ccc;
+}
+.box {
+  background-color: #f0f0f0;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  position: relative;
+  height: 200px;
+}
+.box-buttons {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+.files-list {
+margin-top: 40px;
+}
+.files-list li {
+margin-bottom: 10px;
+}
+.file-icon {
+margin-right: 10px;
+}
+.file-item {
+padding-bottom: 10px;
+border-bottom: 1px solid #ccc;
+}
+.icons {
+display: flex;
+justify-content: space-between;
+}
+.icon {
+font-size: 24px;
+margin: 0 10px;
+}
+.bell-icon {
+color: gray; /* Change to your desired color */
+}
+.settings-icon {
+color: gray; /* Change to your desired color */
+}
+.profile-icon {
+color: gray; /* Change to your desired color */
+}
+.file-section {
+margin-top: 20px;
+}
+.file-section h4 {
+font-size: 18px;
+margin-bottom: 10px;
+color: #33cc33; /* Green color */
+
+}
+.btn-type {
+background-color: #33cc33; /* Green color */
+border-color: #33cc33; /* Green color */
+color: #fff; /* White text color */
+}
+
+/* Change the color of the Date and Export buttons */
+.btn-date,
+.btn-export {
+background-color: #33cc33; /* Green color */
+border-color: #33cc33; /* Green color */
+color: #fff; /* White text color */
+}

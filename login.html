@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three-Column Layout</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css"  >
+    </head>
+  <body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 left-divider">
+                <div class="company-logo">
+                    <img src="logo.svg" alt="Company Logo">
+                </div>
+                <hr class="divider">
+                <div class="folder-sections">
+                    
+                    <ul class="list-unstyled">
+                        <!-- ... Folder items with dropdowns ... -->
+                        <li class="mb-2">
+                          <a href="#" class="folder-icon"><i class="fas fa-folder"></i></a>
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Folder 1</a>
+                          <div class="dropdown-menu">
+                              <a class="dropdown-item" href="#">
+                                  <i class="far fa-file file-icon"></i> File 1
+                              </a>
+                              <a class="dropdown-item" href="#">
+                                  <i class="far fa-file file-icon"></i> File 2
+                              </a>
+                          </div>
+                      </li>
+                      <!-- Add more folder items with files here -->
+                      <li class="mb-2">
+                        <a href="#" class="folder-icon"><i class="fas fa-folder"></i></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Folder 2</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">
+                                <i class="far fa-file file-icon"></i> File 3
+                            </a>
+                            <a class="dropdown-item" href="#">
+                                <i class="far fa-file file-icon"></i> File 4
+                            </a>
+                        </div>
+                    </li>
+                    <li class="mb-2">
+                      <a href="#" class="folder-icon"><i class="fas fa-folder"></i></a>
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Folder 3</a>
+                      <div class="dropdown-menu">
+                          <a class="dropdown-item" href="#">
+                              <i class="far fa-file file-icon"></i> File 5
+                          </a>
+                          <a class="dropdown-item" href="#">
+                              <i class="far fa-file file-icon"></i> File 6
+                          </a>
+                      </div>
+                  </li>
+                  <li class="mb-2">
+                    <a href="#" class="folder-icon"><i class="fas fa-folder"></i></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Folder 4</a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">
+                            <i class="far fa-file file-icon"></i> File 7
+                        </a>
+                        <a class="dropdown-item" href="#">
+                            <i class="far fa-file file-icon"></i> File 8
+                        </a>
+                    </div>
+                </li>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-8 middle-section">
+                <div class="search-bar">
+                    <input type="text" class="form-control" placeholder="Search...">
+                </div>
+                <!-- <hr class="divider"> -->
+                <!-- <div class="row">
+                    <div class="col-md-6">
+                        <div class="box">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="box">
+                            
+                        </div>
+                    </div>
+                </div> -->
+                <hr class="divider">
+                <div class="box">
+                  <div class="box-buttons">
+                    <button class="btn-type btn btn-secondary">Type</button>
+                    <div class="dropdown-menu dropdown-menu-type">
+                      <a class="dropdown-item" href="#">PDF</a>
+                      <a class="dropdown-item" href="#">Word</a>
+                      <a class="dropdown-item" href="#">Excel</a>
+                      <!-- Add more file types here -->
+                  </div>
+                    <button class="btn-date btn btn-secondary">Date (from - to)</button>
+                    <button class="btn-export btn btn-secondary">Export</button>
+                </div>
+                <ul class="list-unstyled files-list">
+                  <li class="file-item"><i class="far fa-file file-icon"></i><a href="#"><i class="far fa-file"></i> Document.pdf</a></li>
+                  <li class="file-item"><i class="far fa-file file-icon"></i><a href="#"><i class="far fa-file"></i> Presentation.pptx</a></li>
+                  <li class="file-item"><i class="far fa-file file-icon"></i><a href="#"><i class="far fa-file"></i> Spreadsheet.xlsx</a></li>
+                  <!-- Add more files as needed -->
+              </ul>
+                </div>
+                
+            </div>
+            <div class="col-md-2 right-divider">
+                  <div class="icons">
+                      <span class="icon bell-icon">&#128276;</span> <!-- Notification Bell -->
+                      <span class="icon settings-icon">&#9881;</span>   <!-- Settings -->
+                      <span class="icon profile-icon">&#128100;</span> <!-- Profile -->
+                  </div>
+                  <hr/>
+                  <div class="file-section">
+                    <h4>Favorites</h4>
+                    <!-- List of favorite files -->
+                </div>
+                <hr/>
+                
+                <div class="file-section">
+                    <h4>Recent Files</h4>
+                    <!-- List of recent files -->
+                </div>
+                <hr/>
+                
+                <div class="file-section">
+                    <h4>Downloaded Files</h4>
+                    <!-- List of downloaded files -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    
+</body>
+</html>
+
