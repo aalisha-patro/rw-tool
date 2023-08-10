@@ -1,36 +1,30 @@
 import React, { useState } from 'react';
-import LeftSection from './components/LeftSection';
-import MiddleSection from './components/MiddleSection';
-import RightSection from './components/RightSection';
+import File from './File';
 
-function App() {
-  const [folders, setFolders] = useState([
-    { id: 1, name: 'Folder 1' },
-    { id: 2, name: 'Folder 2' },
-    // Add more folders as needed
-  ]);
+function MiddleSection({ files }) {
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const [files, setFiles] = useState([
-    { id: 1, name: 'File 1.txt', folderId: 1 },
-    { id: 2, name: 'File 2.pdf', folderId: 2 },
-    // Add more files as needed
-  ]);
-
-  const [selectedFolder, setSelectedFolder] = useState(null);
-
-  const handleFolderClick = (folderId) => {
-    setSelectedFolder(folderId);
-  };
-
-  const filteredFiles = files.filter(file => file.folderId === selectedFolder);
+  const filteredFiles = files.filter(file =>
+    file.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="app">
-      <LeftSection folders={folders} onFolderClick={handleFolderClick} />
-      <MiddleSection files={filteredFiles} />
-      <RightSection />
+    <div className="middle-section">
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search files..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+      <div className="file-list">
+        {filteredFiles.map(file => (
+          <File key={file.id} name={file.name} />
+        ))}
+      </div>
     </div>
   );
 }
 
-export default App;
+export default MiddleSection;
