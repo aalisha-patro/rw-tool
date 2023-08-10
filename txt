@@ -5,7 +5,43 @@ import List from '@mui/material/List';
 
 function LeftSection({ folders, onFolderClick }) {
   return (
-    <div className="left-section">
+    <div className="left-section">import React, { useState } from 'react';
+import File from './File';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import List from '@mui/material/List';
+
+function MiddleSection({ files }) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredFiles = files.filter(file =>
+    file.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="middle-section">
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12}>
+          <TextField
+            label="Search files..."
+            variant="outlined"
+            fullWidth
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </Grid>
+      </Grid>
+      <List className="file-list">
+        {filteredFiles.map(file => (
+          <File key={file.id} name={file.name} />
+        ))}
+      </List>
+    </div>
+  );
+}
+
+export default MiddleSection;
+
       <CompanyLogo />
       <List className="folder-list">
         {folders.map(folder => (
