@@ -1,12 +1,16 @@
 import React from 'react';
-import { ListItem, ListItemText } from '@mui/material';
+import { ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
-function Folder({ name, onClick }) {
+function File({ name }) {
   return (
-    <ListItem button onClick={onClick}>
+    <ListItem>
+      <ListItemIcon>
+        <InsertDriveFileIcon />
+      </ListItemIcon>
       <ListItemText primary={name} />
     </ListItem>
   );
 }
 
-export default Folder;
+export default File;
