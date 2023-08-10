@@ -1,65 +1,44 @@
 import React, { useState } from 'react';
-import File from './File';
-import TextField from '@mui/material/TextField';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import { IconButton, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import IconButton from '@mui/material/IconButton';
-import Grid from '@mui/material/Grid';
+import FileCopyIcon from '@mui/icons-material/FileCopy'; // Import the icon for file type
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import GetAppIcon from '@mui/icons-material/GetApp';
 
-function MiddleSection({ files, onToggleFavorite }) {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredFiles = files.filter(file =>
-    file.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+function RightSection({ favoriteFiles }) {
   return (
-    <div className="middle-section">
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12}>
-          <TextField
-            label="Search files..."
-            variant="outlined"
-            fullWidth
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </Grid>
-      </Grid>
-      <TableContainer component={Paper}>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Date Uploaded</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Favorite</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredFiles.map(file => (
-              <TableRow key={file.id}>
-                <TableCell>{file.name}</TableCell>
-                <TableCell>{file.uploadDate}</TableCell>
-                <TableCell>{file.type}</TableCell>
-                <TableCell>
-                  <IconButton onClick={() => onToggleFavorite(file)}>
-                    {file.isFavorite ? <FavoriteIcon color="secondary" /> : <FavoriteIcon />}
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <div className="right-section">
+      <IconButton className="notification-settings">
+        <NotificationsIcon />
+      </IconButton>
+      <IconButton className="profile-icon">
+        <AccountCircleIcon />
+      </IconButton>
+      <div className="file-sections">
+        <List>
+          {/* Favorites Section */}
+          <ListItem>
+            <ListItemIcon>
+              <FavoriteIcon />
+            </ListItemIcon>
+            <ListItemText primary="Favorite Files" />
+          </ListItem>
+          {favoriteFiles.map(file => (
+            <ListItem key={file.id}>
+              <ListItemIcon>
+                <FileCopyIcon /> {/* Replace with your desired file type icon */}
+              </ListItemIcon>
+              <ListItemText primary={file.name} />
+            </ListItem>
+          ))}
+          {/* Other Sections */}
+          {/* ... */}
+        </List>
+      </div>
     </div>
   );
 }
 
-export default MiddleSection;
+export default RightSection;
