@@ -1,7 +1,10 @@
 import React from 'react';
-import { Avatar, IconButton } from '@mui/material';
+import { Avatar, IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import GetAppIcon from '@mui/icons-material/GetApp';
 
 function RightSection() {
   return (
@@ -12,6 +15,28 @@ function RightSection() {
       <IconButton className="profile-icon">
         <AccountCircleIcon />
       </IconButton>
+      <div className="file-sections">
+        <List>
+          <ListItem>
+            <ListItemIcon>
+              <FavoriteIcon />
+            </ListItemIcon>
+            <ListItemText primary="Favorite Files" />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <AccessTimeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Recent Files" />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <GetAppIcon />
+            </ListItemIcon>
+            <ListItemText primary="Downloaded Files" />
+          </ListItem>
+        </List>
+      </div>
     </div>
   );
 }
