@@ -1,40 +1,42 @@
-import React, { useState } from 'react';
-import LeftSection from './components/LeftSection';
-import MiddleSection from './components/MiddleSection';
-import RightSection from './components/RightSection';
-import Grid from '@mui/material/Grid';
+import React from 'react';
+import { IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FileCopyIcon from '@mui/icons-material/FileCopy'; // Import the icon for file type
 
-function App() {
-  const [files, setFiles] = useState(/* ... */);
-  const [favoriteFiles, setFavoriteFiles] = useState([]);
-
-  const handleToggleFavorite = (file) => {
-    if (file.isFavorite) {
-      setFavoriteFiles(prevFavorites => prevFavorites.filter(fav => fav.id !== file.id));
-    } else {
-      setFavoriteFiles(prevFavorites => [...prevFavorites, file]);
-    }
-    
-    setFiles(prevFiles =>
-      prevFiles.map(f => (f.id === file.id ? { ...f, isFavorite: !f.isFavorite } : f))
-    );
-  };
-
+function RightSection({ favoriteFiles }) {
   return (
-    <div className="app">
-      <Grid container spacing={2}>
-        <Grid item xs={3}>
-          <LeftSection /* ... */ />
-        </Grid>
-        <Grid item xs={6}>
-          <MiddleSection files={files} onToggleFavorite={handleToggleFavorite} />
-        </Grid>
-        <Grid item xs={3}>
-          <RightSection favoriteFiles={favoriteFiles} />
-        </Grid>
-      </Grid>
+    <div className="right-section">
+      <IconButton className="notification-settings">
+        <NotificationsIcon />
+      </IconButton>
+      <IconButton className="profile-icon">
+        <AccountCircleIcon />
+      </IconButton>
+      <div className="file-sections">
+        <List>
+          {/* Favorites Section */}
+          <ListItem>
+            <ListItemIcon>
+              <FavoriteIcon />
+            </ListItemIcon>
+            <ListItemText primary="Favorite Files" />
+          </ListItem>
+          {favoriteFiles.map(file => (
+            <ListItem key={file.id}>
+              <ListItemIcon>
+                <FileCopyIcon /> {/* Replace with your desired file type icon */}
+              </ListItemIcon>
+              <ListItemText primary={file.name} />
+            </ListItem>
+          ))}
+          {/* Other Sections */}
+          {/* ... */}
+        </List>
+      </div>
     </div>
   );
 }
 
-export default App;
+export default RightSection;
