@@ -1,12 +1,12 @@
 import React from 'react';
-import { Avatar } from '@mui/material';
+import { ListItem, ListItemText } from '@mui/material';
 
-function CompanyLogo() {
+function Folder({ name, onClick }) {
   return (
-    <div className="company-logo">
-      <Avatar alt="Company Logo" src="path-to-your-logo-image.png" />
-    </div>
+    <ListItem button onClick={onClick}>
+      <ListItemText primary={name} />
+    </ListItem>
   );
 }
 
-export default CompanyLogo;
+export default Folder;
