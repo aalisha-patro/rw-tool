@@ -1,16 +1,19 @@
 import React from 'react';
-import { ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import { Avatar, IconButton } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-function File({ name }) {
+function RightSection() {
   return (
-    <ListItem>
-      <ListItemIcon>
-        <InsertDriveFileIcon />
-      </ListItemIcon>
-      <ListItemText primary={name} />
-    </ListItem>
+    <div className="right-section">
+      <IconButton className="notification-settings">
+        <NotificationsIcon />
+      </IconButton>
+      <IconButton className="profile-icon">
+        <AccountCircleIcon />
+      </IconButton>
+    </div>
   );
 }
 
-export default File;
+export default RightSection;
