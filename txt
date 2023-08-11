@@ -1,71 +1,53 @@
-import React from 'react';
-import { IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+/* Add your custom styling here */
 
-function RightSection({ favoriteFiles, recentFiles, downloadedFiles }) {
-  return (
-    <div className="right-section">
-      <IconButton className="notification-settings">
-        <NotificationsIcon />
-      </IconButton>
-      <IconButton className="profile-icon">
-        <AccountCircleIcon />
-      </IconButton>
-      <div className="file-sections">
-        <List>
-          {/* Favorites Section */}
-          <ListItem>
-            <ListItemIcon>
-              <FavoriteIcon />
-            </ListItemIcon>
-            <ListItemText primary="Favorite Files" />
-          </ListItem>
-          {favoriteFiles.map(file => (
-            <ListItem key={file.id}>
-              <ListItemIcon>
-                <FileCopyIcon />
-              </ListItemIcon>
-              <ListItemText primary={file.name} />
-            </ListItem>
-          ))}
-          {/* Recent Files Section */}
-          <ListItem>
-            <ListItemIcon>
-              <AccessTimeIcon />
-            </ListItemIcon>
-            <ListItemText primary="Recent Files" />
-          </ListItem>
-          {recentFiles.map(file => (
-            <ListItem key={file.id}>
-              <ListItemIcon>
-                <FileCopyIcon />
-              </ListItemIcon>
-              <ListItemText primary={file.name} />
-            </ListItem>
-          ))}
-          {/* Downloaded Files Section */}
-          <ListItem>
-            <ListItemIcon>
-              <FileCopyIcon />
-            </ListItemIcon>
-            <ListItemText primary="Downloaded Files" />
-          </ListItem>
-          {downloadedFiles.map(file => (
-            <ListItem key={file.id}>
-              <ListItemIcon>
-                <FileCopyIcon />
-              </ListItemIcon>
-              <ListItemText primary={file.name} />
-            </ListItem>
-          ))}
-        </List>
-      </div>
-    </div>
-  );
+/* Background color */
+.app {
+  background-color: #f0f5f5;
+  padding: 20px;
 }
 
-export default RightSection;
+/* Adjust colors for various components */
+.left-section {
+  background-color: #2e3b3b;
+  color: white;
+}
+
+.middle-section {
+  background-color: white;
+  border: 1px solid #d0d8d8;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.right-section {
+  background-color: #2e3b3b;
+  color: white;
+}
+
+/* Adjust colors for buttons and icons */
+.clickable-file {
+  color: #0072bb;
+  cursor: pointer;
+}
+
+.notification-settings, .profile-icon {
+  color: #0072bb;
+}
+
+/* Styling for the table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #d0d8d8;
+}
+
+th {
+  background-color: #0072bb;
+  color: white;
+}
