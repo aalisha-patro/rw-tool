@@ -1,53 +1,82 @@
-/* Add your custom styling here */
+import React, { useState } from 'react';
+import filesData from '../data/files.json'; // Import files data
+import { TextField, InputAdornment, Table, TableContainer, TableBody, TableCell, TableHead, TableRow, Paper, IconButton, List, ListItem, ListItemText, ListItemIcon, ListItemSecondaryAction } from '@mui/material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import DownloadIcon from '@mui/icons-material/CloudDownload';
+import SearchIcon from '@mui/icons-material/Search';
 
-/* Background color */
-.app {
-  background-color: #f0f5f5;
-  padding: 20px;
+function MiddleSection({ onToggleFavorite, onDownloadFile, onFileClick }) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredFiles = filesData.filter(file =>
+    file.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="middle-section">
+      <TextField
+        label="Search files..."
+        variant="outlined"
+        fullWidth
+        size="small"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+        }}
+        InputLabelProps={{ shrink: true }}
+      />
+      <TableContainer component={Paper}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Folder</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredFiles.map(file => (
+              <TableRow key={file.id}>
+                <TableCell>{file.name}</TableCell>
+                <TableCell>{file.folderId}</TableCell>
+                <TableCell>{/* Display date here */}</TableCell>
+                <TableCell>
+                  <List>
+                    <ListItem>
+                      <ListItemIcon>
+                        <IconButton
+                          onClick={() => onToggleFavorite(file)}
+                          color={file.isFavorite ? 'secondary' : 'default'}
+                        >
+                          <FavoriteIcon />
+                        </IconButton>
+                      </ListItemIcon>
+                      <ListItemIcon>
+                        <IconButton onClick={() => onDownloadFile(file)}>
+                          <DownloadIcon />
+                        </IconButton>
+                      </ListItemIcon>
+                      <ListItemIcon>
+                        <IconButton onClick={() => onFileClick(file)}>
+                          View
+                        </IconButton>
+                      </ListItemIcon>
+                    </ListItem>
+                  </List>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
+  );
 }
 
-/* Adjust colors for various components */
-.left-section {
-  background-color: #2e3b3b;
-  color: white;
-}
-
-.middle-section {
-  background-color: white;
-  border: 1px solid #d0d8d8;
-  border-radius: 8px;
-  padding: 20px;
-}
-
-.right-section {
-  background-color: #2e3b3b;
-  color: white;
-}
-
-/* Adjust colors for buttons and icons */
-.clickable-file {
-  color: #0072bb;
-  cursor: pointer;
-}
-
-.notification-settings, .profile-icon {
-  color: #0072bb;
-}
-
-/* Styling for the table */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-}
-
-th, td {
-  padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #d0d8d8;
-}
-
-th {
-  background-color: #0072bb;
-  color: white;
-}
+export default MiddleSection;
