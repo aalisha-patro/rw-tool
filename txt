@@ -5,12 +5,18 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import DownloadIcon from '@mui/icons-material/CloudDownload';
 import SearchIcon from '@mui/icons-material/Search';
 
-function MiddleSection({ onToggleFavorite, onDownloadFile, onFileClick }) {
+function MiddleSection({ onToggleFavorite, onDownloadFile }) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredFiles = filesData.filter(file =>
     file.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const [recentFile, setRecentFile] = useState(null);
+
+  const handleFileClick = (file) => {
+    setRecentFile(file);
+  };
 
   return (
     <div className="middle-section">
@@ -35,7 +41,6 @@ function MiddleSection({ onToggleFavorite, onDownloadFile, onFileClick }) {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Folder</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -43,8 +48,14 @@ function MiddleSection({ onToggleFavorite, onDownloadFile, onFileClick }) {
           <TableBody>
             {filteredFiles.map(file => (
               <TableRow key={file.id}>
-                <TableCell>{file.name}</TableCell>
-                <TableCell>{file.folderId}</TableCell>
+                <TableCell>
+                  <span
+                    className="file-name"
+                    onClick={() => handleFileClick(file)}
+                  >
+                    {file.name}
+                  </span>
+                </TableCell>
                 <TableCell>{/* Display date here */}</TableCell>
                 <TableCell>
                   <List>
@@ -62,11 +73,6 @@ function MiddleSection({ onToggleFavorite, onDownloadFile, onFileClick }) {
                           <DownloadIcon />
                         </IconButton>
                       </ListItemIcon>
-                      <ListItemIcon>
-                        <IconButton onClick={() => onFileClick(file)}>
-                          View
-                        </IconButton>
-                      </ListItemIcon>
                     </ListItem>
                   </List>
                 </TableCell>
@@ -75,6 +81,13 @@ function MiddleSection({ onToggleFavorite, onDownloadFile, onFileClick }) {
           </TableBody>
         </Table>
       </TableContainer>
+      {recentFile && (
+        <div className="recent-section">
+          <h2>Recent</h2>
+          <p>{recentFile.name}</p>
+          {/* You can display other file details here */}
+        </div>
+      )}
     </div>
   );
 }
