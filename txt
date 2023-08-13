@@ -1,62 +1,34 @@
-folder clicked {id: 1, name: 'Folder 1'}id: 1name: "Folder 1"[[Prototype]]: Object
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [1, 3, 8, 9]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [2, 3, 7, 5]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [1, 2, 3, 4]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [2, 3, 6, 8]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [4, 2, 3, 5]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [1, 6, 2, 3]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [4, 6, 8, 5]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [1, 5, 7, 9]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [3, 4, 8, 2]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [9, 6, 4, 2]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [5, 7, 3, 1]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [1, 3, 7, 8]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [5, 3, 8, 9]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [2, 3, 1, 4]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [9, 8, 7, 6]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [6, 5, 4, 2]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [5, 2, 1, 8]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [7, 3, 5, 1]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [6, 5, 2, 8]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [4, 3, 2, 1]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [7, 4, 6, 9]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [2, 6, 8, 9]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [1, 5, 7, 9]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [2, 6, 9, 3]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [1, 5, 7, 6]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [2, 6, 4, 3]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [2, 9, 8, 6]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [2, 3, 6, 9]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [5, 8, 9, 3]
-App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
-App.js:203 File folder id: (4) [5, 7, 8, 1]
-App.js:206 Filtered files: []
+import React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Grid from '@mui/material/Grid';
+
+function TopBar() {
+  return (
+    <AppBar position="static">
+      <Toolbar>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          My App
+        </Typography>
+        <Grid container alignItems="center" spacing={2}>
+          <Grid item>
+            <IconButton color="inherit">
+              <NotificationsIcon />
+            </IconButton>
+          </Grid>
+          <Grid item>
+            <IconButton color="inherit">
+              <AccountCircleIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
+      </Toolbar>
+    </AppBar>
+  );
+}
+
+export default TopBar;
