@@ -1,36 +1,27 @@
 import React, { useState } from 'react';
-import File from './File';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import List from '@mui/material/List';
+import LeftSection from './components/LeftSection';
+import MiddleSection from './components/MiddleSection';
+import RightSection from './components/RightSection';
+import Grid from '@mui/material/Grid'; // Import Grid component
 
-function MiddleSection({ files }) {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredFiles = files.filter(file =>
-    file.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+function App() {
+  const [/* ... */] = useState(/* ... */);
 
   return (
-    <div className="middle-section">
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12}>
-          <TextField
-            label="Search files..."
-            variant="outlined"
-            fullWidth
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div className="app">
+      <Grid container spacing={2}>
+        <Grid item xs={3}> {/* Left section */}
+          <LeftSection folders={folders} onFolderClick={handleFolderClick} />
+        </Grid>
+        <Grid item xs={6}> {/* Middle section */}
+          <MiddleSection files={files} />
+        </Grid>
+        <Grid item xs={3}> {/* Right section */}
+          <RightSection />
         </Grid>
       </Grid>
-      <List className="file-list">
-        {filteredFiles.map(file => (
-          <File key={file.id} name={file.name} />
-        ))}
-      </List>
     </div>
   );
 }
 
-export default MiddleSection;
+export default App;
