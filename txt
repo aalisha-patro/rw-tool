@@ -4,27 +4,30 @@ import MiddleSection from './components/MiddleSection';
 import RightSection from './components/RightSection';
 
 function App() {
-  const [selectedFolder, setSelectedFolder] = useState(null);
-  const folders = [
+  const [folders, setFolders] = useState([
     { id: 1, name: 'Folder 1' },
     { id: 2, name: 'Folder 2' },
     // Add more folders as needed
-  ];
+  ]);
 
-  const files = [
-    { id: 1, name: 'File 1.txt' },
-    { id: 2, name: 'File 2.pdf' },
+  const [files, setFiles] = useState([
+    { id: 1, name: 'File 1.txt', folderId: 1 },
+    { id: 2, name: 'File 2.pdf', folderId: 2 },
     // Add more files as needed
-  ];
+  ]);
+
+  const [selectedFolder, setSelectedFolder] = useState(null);
 
   const handleFolderClick = (folderId) => {
     setSelectedFolder(folderId);
   };
 
+  const filteredFiles = files.filter(file => file.folderId === selectedFolder);
+
   return (
     <div className="app">
       <LeftSection folders={folders} onFolderClick={handleFolderClick} />
-      <MiddleSection files={files} />
+      <MiddleSection files={filteredFiles} />
       <RightSection />
     </div>
   );
