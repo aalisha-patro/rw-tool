@@ -404,4 +404,38 @@ function MiddleSection({ onToggleFavorite,onDownloadFiles,onFileClick }) {
 }
 
 export default MiddleSection;
+[
+    { "id": 1, "name": "File 1.txt", "folderIds": [1,3,8,9] },
+    { "id": 2, "name": "File 2.txt", "folderIds": [2,3,7,5] },
+    { "id": 3, "name": "File 3.txt", "folderIds": [1,2,3,4] },
+    { "id": 4, "name": "File 4.txt", "folderIds": [2,3,6,8] },
+    { "id": 5, "name": "File 5.txt", "folderIds": [4,2,3,5] },
+    { "id": 6, "name": "File 6.txt", "folderIds": [1,6,2,3] },
+    { "id": 7, "name": "File 7.txt", "folderIds": [4,6,8,5] },
+    { "id": 8, "name": "File 8.txt", "folderIds": [1,5,7,9] },
+    { "id": 9, "name": "File 9.txt", "folderIds": [3,4,8,2] },
+    { "id": 10, "name": "File 10.txt", "folderIds": [9,6,4,2] },
+    { "id": 11, "name": "File 11.txt", "folderIds": [5,7,3,1] },
+    { "id": 12, "name": "File 12.txt", "folderIds": [1,3,7,8] },
+    { "id": 13, "name": "File 13.txt", "folderIds": [5,3,8,9] },
+    { "id": 14, "name": "File 14.txt", "folderIds": [2,3,1,4] },
+    { "id": 15, "name": "File 15.txt", "folderIds": [9,8,7,6] },
+    { "id": 16, "name": "File 16.txt", "folderIds": [6,5,4,2] },
+    { "id": 17, "name": "File 17.txt", "folderIds": [5,2,1,8] },
+    { "id": 18, "name": "File 18.txt", "folderIds": [7,3,5,1] },
+    { "id": 19, "name": "File 19.txt", "folderIds": [6,5,2,8] },
+    { "id": 20, "name": "File 20.txt", "folderIds": [4,3,2,1] },
+    { "id": 21, "name": "File 21.txt", "folderIds": [7,4,6,9] },
+    { "id": 22, "name": "File 22.txt", "folderIds": [2,6,8,9] },
+    { "id": 23, "name": "File 23.txt", "folderIds": [1,5,7,9] },
+    { "id": 24, "name": "File 24.txt", "folderIds": [2,6,9,3] },
+    { "id": 25, "name": "File 25.txt", "folderIds": [1,5,7,6] },
+    { "id": 26, "name": "File 26.txt", "folderIds": [2,6,4,3] },
+    { "id": 27, "name": "File 27.txt", "folderIds": [2,9,8,6] },
+    { "id": 28, "name": "File 28.txt", "folderIds": [2,3,6,9] },
+    { "id": 29, "name": "File 29.txt", "folderIds": [5,8,9,3] },
+    { "id": 30, "name": "File 20.txt", "folderIds": [5,7,8,1] }
+
+   
+  ]
 
