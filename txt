@@ -1,14 +1,17 @@
 import React from 'react';
+import { Avatar, IconButton } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 function RightSection() {
   return (
     <div className="right-section">
-      <div className="notification-settings">
-        <img src="notification-icon.png" alt="Notification Settings" />
-      </div>
-      <div className="profile-icon">
-        <img src="profile-icon.png" alt="Profile" />
-      </div>
+      <IconButton className="notification-settings">
+        <NotificationsIcon />
+      </IconButton>
+      <IconButton className="profile-icon">
+        <AccountCircleIcon />
+      </IconButton>
     </div>
   );
 }
