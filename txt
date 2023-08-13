@@ -1,95 +1,20 @@
-import React, { useState } from 'react';
-import filesData from '../data/files.json'; // Import files data
-import { TextField, InputAdornment, Table, TableContainer, TableBody, TableCell, TableHead, TableRow, Paper, IconButton, List, ListItem, ListItemText, ListItemIcon, ListItemSecondaryAction } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import DownloadIcon from '@mui/icons-material/CloudDownload';
-import SearchIcon from '@mui/icons-material/Search';
+import React from 'react';
+import CompanyLogo from './CompanyLogo';
+import Folder from './Folder';
 
-function MiddleSection({ onToggleFavorite, onDownloadFile }) {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredFiles = filesData.filter(file =>
-    file.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const [recentFile, setRecentFile] = useState(null);
-
-  const handleFileClick = (file) => {
-    setRecentFile(file);
-  };
-
+function LeftSection({ folders, onFolderClick }) {
   return (
-    <div className="middle-section">
-      <TextField
-        label="Search files..."
-        variant="outlined"
-        fullWidth
-        size="small"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        }}
-        InputLabelProps={{ shrink: true }}
-      />
-      <TableContainer component={Paper}>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Date</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredFiles.map(file => (
-              <TableRow key={file.id}>
-                <TableCell>
-                  <span
-                    className="file-name"
-                    onClick={() => handleFileClick(file)}
-                  >
-                    {file.name}
-                  </span>
-                </TableCell>
-                <TableCell>{/* Display date here */}</TableCell>
-                <TableCell>
-                  <List>
-                    <ListItem>
-                      <ListItemIcon>
-                        <IconButton
-                          onClick={() => onToggleFavorite(file)}
-                          color={file.isFavorite ? 'secondary' : 'default'}
-                        >
-                          <FavoriteIcon />
-                        </IconButton>
-                      </ListItemIcon>
-                      <ListItemIcon>
-                        <IconButton onClick={() => onDownloadFile(file)}>
-                          <DownloadIcon />
-                        </IconButton>
-                      </ListItemIcon>
-                    </ListItem>
-                  </List>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      {recentFile && (
-        <div className="recent-section">
-          <h2>Recent</h2>
-          <p>{recentFile.name}</p>
-          {/* You can display other file details here */}
-        </div>
-      )}
+    <div className="left-section">
+      <CompanyLogo />
+      {folders.map(folder => (
+        <Folder
+          key={folder.id}
+          name={folder.name}
+          onClick={() => onFolderClick(folder.id)}
+        />
+      ))}
     </div>
   );
 }
 
-export default MiddleSection;
+export default LeftSection;
