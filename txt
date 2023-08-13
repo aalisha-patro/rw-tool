@@ -1,4 +1,79 @@
- const handleFileClick = (file) => {
+import { List, ListItem } from '@mui/material';
+import React, { useState } from 'react';
+import CompanyLogo from './CompanyLogo';
+import Folder from './Folder';
+import foldersData from './folders.json'
+
+
+const FOLDERS_PER_PAGE = 10;
+
+function LeftSection({ onFolderClick }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(foldersData.length / FOLDERS_PER_PAGE);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const startIndex = (currentPage - 1) * FOLDERS_PER_PAGE;
+  const visibleFolders = foldersData.slice(startIndex, startIndex + FOLDERS_PER_PAGE);
+
+  return (
+    <div className="left-section">
+      <CompanyLogo />
+      <List className="folder-list">
+        {foldersData.map(folder => (
+          <ListItem key={folder.id}
+            >
+              <Folder
+              
+            name={folder.name}
+            onClick={() => onFolderClick(folder.id)}
+          /></ListItem>
+        ))}
+      </List>
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => handlePageChange(index + 1)}
+            className={currentPage === index + 1 ? 'active' : ''}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default LeftSection;
+
+const [selectedFolder, setSelectedFolder] = useState(null);
+  const [favoriteFiles, setFavoriteFiles]=useState([]);
+  const [downloadedFiles,setDownloadedFiles] = useState([]);
+  const [recentFiles,setRecentFiles] = useState([]);
+
+  const handleFolderClick = (folderId) => {
+    setSelectedFolder(folderId);
+  };
+
+  const handleToggleFavorite=(file)=>{
+    if(file.isFavorite){
+      setFavoriteFiles(prevFavorites=>prevFavorites.filter(fav=>fav.id!== file.id));
+
+    }
+    else{
+      setFavoriteFiles(prevFavorites=>[...prevFavorites,file]);
+    }
+    setFiles(prevFiles=>
+      prevFiles.map(f=>(f.id===file.id?{...f,isFavorite:!f.isFavorite}:f)))
+  }
+
+  const handleDownloadFile =(file)=>{
+    setDownloadedFiles(prevDownloaded=>[...prevDownloaded,file])
+  }
+  const handleFileClick = (file) => {
     // Update recentFiles state
     const MAX_RECENT_FILES = 5; // Adjust the maximum number of recent files as needed
 
@@ -9,3 +84,30 @@
       setRecentFiles(updatedRecentFiles);
     }
   };
+
+  const filteredFiles = selectedFolder
+  ? filesData.filter(file => file.folderIds.includes(selectedFolder)) : filesData;
+
+  return (
+    <div className="app">
+      <Grid container spacing={2}>
+        <Grid item xs={3}> {/* Left section */}
+          <LeftSection folders={foldersData} onFolderClick={handleFolderClick} />
+        </Grid>
+        <Grid item xs={6}> {/* Middle section */}
+          <MiddleSection files={filteredFiles} 
+          onToggleFavorite={handleToggleFavorite}
+          onFileClick={handleFileClick}
+          onDownloadFiles={handleDownloadFile} />
+        </Grid>
+        <Grid item xs={3}> {/* Right section */}
+          <RightSection favoriteFiles={favoriteFiles}
+          recentFiles={recentFiles}
+          downloadedFiles={downloadedFiles} />
+        </Grid>
+      </Grid>
+    </div>
+  );
+}
+
+export default App;
