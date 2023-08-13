@@ -1,23 +1,507 @@
-import { useState, useEffect } from 'react';
+import React from 'react';
+import { IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import TopBar from './TopBar';
 
-// ... your other code ...
+function RightSection({ favoriteFiles, recentFiles, downloadedFiles }) {
+  return (
+    <div className="right-section">
+      <TopBar/>
+      <hr/>
+      <div className="file-sections">
+        <List>
+          {/* Favorites Section */}
+          <ListItem>
+            <ListItemIcon>
+              <FavoriteIcon />
+            </ListItemIcon>
+            <ListItemText primary="Favorite Files" />
+          </ListItem>
+          {favoriteFiles.map(file => (
+            <ListItem key={file.id}>
+              <ListItemIcon>
+                <FileCopyIcon />
+              </ListItemIcon>
+              <ListItemText primary={file.name} />
+            </ListItem>
+          ))}
+          <hr />
+          {/* Recent Files Section */}
+          <ListItem>
+            <ListItemIcon>
+              <AccessTimeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Recent Files" />
+          </ListItem>
+          {recentFiles.map(file => (
+            <ListItem key={file.id}>
+              <ListItemIcon>
+                <FileCopyIcon />
+              </ListItemIcon>
+              <ListItemText primary={file.name} />
+            </ListItem>
+          ))}
+          <hr/>
 
-const debounce = (func, delay) => {
-  let timeoutId;
-  return (...args) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      func(...args);
-    }, delay);
+          {/* Downloaded Files Section */}
+          <ListItem>
+            <ListItemIcon>
+              <FileCopyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Downloaded Files" />
+          </ListItem>
+          {downloadedFiles.map(file => (
+            <ListItem key={file.id}>
+              <ListItemIcon>
+                <FileCopyIcon />
+              </ListItemIcon>
+              <ListItemText primary={file.name} />
+            </ListItem>
+          ))}
+        </List>
+      </div>
+    </div>
+  );
+}
+
+export default RightSection;
+
+=
+
+import React, { useState } from 'react';
+import File from './File';
+import TextField from '@mui/material/TextField';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import IconButton from '@mui/material/IconButton';
+import Grid from '@mui/material/Grid';
+import DownloadIcon from '@mui/icons-material/CloudDownload';
+import { InputAdornment, Pagination, PaginationItem } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import filesData from './files.json'
+import  MenuItem  from '@mui/material/MenuItem';
+import  Button  from '@mui/material/Button';
+import  Select  from '@mui/material/Select';
+import {DateRangePicker} from '@mui/lab';
+
+function MiddleSection({ files,onToggleFavorite,onDownloadFiles,onFileClick }) {
+  const itemsPerPage =5;
+  const [page, setPage]=useState(1);
+
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedFileType, setSelectedFileType] = useState('');
+  const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleChangePage = (event,newPage)=>{
+    setPage(newPage);
+  }
+
+
+  const handleFileTypeChange = (event) => {
+    setSelectedFileType(event.target.value);
   };
-};
 
-// ... your other code ...
+  const handleDateRangeChange = (newValue) => {
+    setSelectedDateRange(newValue);
+  };
+  const handleSearchTermChange =(event)=>{
+    setSearchTerm(event.target.value);
+  }
 
-const debouncedToggleFavorite = debounce(handleToggleFavorite, 300); // Adjust the delay as needed
+  const filteredFiles = files.
+  filter(file =>{
+    if(searchTerm === ''){
+      return true;
+    }
+  
+    file.name.toLowerCase().includes(searchTerm.toLowerCase());}
+  )
+    .filter((file) => {
+      if (selectedFileType === '') {
+        return true; // No filter applied
+      }
+      return file.type === selectedFileType;
+    })
+    .filter((file) => {
+      const uploadDate = new Date(file.uploadDate);
+      const startDate = selectedDateRange[0];
+      const endDate = selectedDateRange[1];
 
-// ... your other code ...
+      if (!startDate || !endDate) {
+        return true; // No filter applied
+      }
 
-<IconButton onClick={() => debouncedToggleFavorite(file)}>
-  {file.isFavorite ? <FavoriteIcon style={{ color: "green" }} /> : <FavoriteIcon />}
-</IconButton>
+      return uploadDate >= startDate && uploadDate <= endDate;
+    });
+
+    const pageCount = Math.ceil(filteredFiles.length/ itemsPerPage);
+    const startIndex = (page -1)*itemsPerPage;
+    const endIndex= startIndex+ itemsPerPage;
+    const visibleFiles = filteredFiles.slice(startIndex, endIndex);
+
+  return (
+    <div className="middle-section">
+      {/* <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12}> */}
+        <div>
+        {/* Button to toggle filters */}
+        <Button onClick={() => setShowFilters(!showFilters)}>
+          Show Filters
+        </Button>
+
+        {/* Filters dropdowns */}
+        {showFilters && (
+          <div >
+            {/* Dropdown for filtering file type */}
+            <Select value={selectedFileType} onChange={handleFileTypeChange} style={{height:"20 px"}}>
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="PDF">PDF</MenuItem>
+              <MenuItem value="Word">Word</MenuItem>
+              {/* Add more file types */}
+            </Select>
+            
+                {/* <Button onClick={()=>setSelectedDateRange([null,null])}>Clear date range</Button>
+            
+                        <DateRangePicker
+              startText="Start Date"
+              endText="End Date"
+              value={selectedDateRange}
+              onChange={handleDateRangeChange}
+              renderInput={(startProps, endProps) => (
+                <React.Fragment>
+                  <TextField {...startProps} size="small" variant="outlined" />
+                  <TextField {...endProps} size="small" variant="outlined" />
+                </React.Fragment>
+              )}
+            /> */}
+          </div>
+        )}
+      </div>
+
+          <TextField
+          style={{marginTop : "20 px"}}
+            placeholder="Search files..."
+            variant="outlined"
+            fullWidth
+            size='small'
+            value={searchTerm}
+             onChange={handleSearchTermChange}
+            //{(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment:(
+                <InputAdornment position='start'>
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            InputLabelProps={{shrink: true}}
+          />
+        {/* </Grid>
+      </Grid> */}
+      <TableContainer component={Paper}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Date Uploaded</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Favorite</TableCell>
+              <TableCell>Download</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {visibleFiles.map(file => (
+              <TableRow key={file.id}>
+                <TableCell>
+                  <span
+                  className='clickable-file'
+                  onClick={()=>onFileClick(file)}>{file.name}</span>
+                </TableCell>
+                <TableCell>{file.uploadDate}</TableCell>
+                <TableCell>{file.type}</TableCell>
+                <TableCell>
+                  <IconButton onClick={()=>onToggleFavorite(file)}>
+                    {file.isFavorite ? <FavoriteIcon style={{color:"green"}} /> : <FavoriteIcon />}
+                  </IconButton>
+                </TableCell>
+                <TableCell>
+                  <IconButton onClick={()=> onDownloadFiles(file)}>
+                    <DownloadIcon/>
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Pagination 
+      count={pageCount}
+      page={page}
+      onChange={handleChangePage}
+      renderItem={(item)=>(
+        <PaginationItem
+        component={Button}
+        {...item}/>
+      )}/>
+    </div>
+  );
+}
+
+export default MiddleSection;
+
+import React, { useState } from 'react';
+import LeftSection from './components/LeftSection';
+import MiddleSection from './components/MiddleSection';
+import RightSection from './components/RightSection';
+import Grid from '@mui/material/Grid';
+import './App.css'
+import folderData from './components/folders.json';
+import filesData from './components/files.json'
+
+
+function App() {
+  const [folders, setFolders] = useState([
+    { id: 1, name: 'Folder 1' },
+    { id: 2, name: 'Folder 2' },
+    { id: 3, name: 'Folder 3'},
+    { id: 4, name: 'Folder 4'},
+    { id: 5, name: 'Folder 5'},
+    { id: 6, name: 'Folder 6'},
+    { id: 7, name: 'Folder 7'},
+    { id: 8, name: 'Folder 8'},
+    { id: 9, name: 'Folder 10'},
+
+    // Add more folders as needed
+  ]);
+
+  const [files, setFiles] = useState([
+    { id: 1, name: 'File 1.txt', folderId: 1 },
+    { id: 2, name: 'File 2.pdf', folderId: 2 },
+    { id: 3, name: 'File 3.pdf', folderId: 1 },
+    { id: 3, name: 'File 3.pdf', folderId: 2 },
+
+    { id: 4, name: 'File 4.pdf', folderId: 1 },
+    { id: 5, name: 'File 5.pdf', folderId: 3 },
+    { id: 6, name: 'File 6.pdf', folderId: 3 },
+    { id: 7, name: 'File 7.pdf', folderId: 1 },
+    { id: 8, name: 'File 8.pdf', folderId: 2 },
+    { id: 9, name: 'File 9.pdf', folderId: 1 },
+    { id: 10, name: 'File 10.pdf', folderId: 3 },
+    { id: 11, name: 'File 11.pdf', folderId: 1 },
+    { id: 12, name: 'File 12.pdf', folderId: 2 },
+    { id: 13, name: 'File 13.pdf', folderId: 3 },
+    { id: 14, name: 'File 14.pdf', folderId: 1 },
+    { id: 15, name: 'File 15.pdf', folderId: 2 },
+    { id: 16, name: 'File 16.pdf', folderId: 3 },
+    { id: 17, name: 'File 17.pdf', folderId: 1 },
+    { id: 18, name: 'File 18.pdf', folderId: 2 },
+    { id: 19, name: 'File 19.pdf', folderId: 3 },
+    { id: 20, name: 'File 20.pdf', folderId: 1 },
+    { id: 21, name: 'File 21.pdf', folderId: 2 },
+    { id: 22, name: 'File 22.pdf', folderId: 3 },
+    { id: 23, name: 'File 23.pdf', folderId: 1 },
+    { id: 4, name: 'File 4.pdf', folderId: 4 },
+    { id: 5, name: 'File 5.pdf', folderId: 5 },
+    { id: 6, name: 'File 6.pdf', folderId: 6 },
+    { id: 7, name: 'File 7.pdf', folderId: 7 },
+    { id: 8, name: 'File 8.pdf', folderId: 8 },
+    { id: 9, name: 'File 9.pdf', folderId: 9 },
+    { id: 10, name: 'File 10.pdf', folderId: 4 },
+    { id: 11, name: 'File 11.pdf', folderId: 5 },
+    { id: 12, name: 'File 12.pdf', folderId: 6 },
+    { id: 13, name: 'File 13.pdf', folderId: 7 },
+    { id: 14, name: 'File 14.pdf', folderId: 8 },
+    { id: 15, name: 'File 15.pdf', folderId: 9 },
+    { id: 16, name: 'File 16.pdf', folderId: 4 },
+    { id: 17, name: 'File 17.pdf', folderId: 5 },
+    { id: 18, name: 'File 18.pdf', folderId: 6 },
+    { id: 19, name: 'File 19.pdf', folderId: 7 },
+    { id: 20, name: 'File 20.pdf', folderId: 8 },
+    { id: 21, name: 'File 21.pdf', folderId: 9 },
+    { id: 22, name: 'File 22.pdf', folderId: 4 },
+    { id: 23, name: 'File 23.pdf', folderId: 5 },
+    { id: 24, name: 'File 24.pdf', folderId: 6 },
+    { id: 25, name: 'File 25.pdf', folderId: 7 },
+    { id: 26, name: 'File 26.pdf', folderId: 9 },
+    { id: 27, name: 'File 27.pdf', folderId: 4 },
+    { id: 28, name: 'File 28.pdf', folderId: 5 },
+    { id: 29, name: 'File 29.pdf', folderId: 6 },
+    { id: 30, name: 'File 30.pdf', folderId: 7 },
+    
+
+    // Add more files as needed
+  ]);
+
+  const [selectedFolder, setSelectedFolder] = useState(null);
+
+  const handleFolderClick = (folderId) => {
+    setSelectedFolder(folderId);
+  };
+  const [favoriteFiles, setFavoriteFiles]= useState([]);
+  const [downloadFiles, setDownloadFiles]= useState([]);
+  const [recentFiles,setRecentFiles] = useState([]);
+  
+  const handleToggleFavorite = (file) => {
+    if (file.isFavorite) {
+      setFavoriteFiles(prevFavorites => prevFavorites.filter(fav => fav.id !== file.id));
+    } else {
+      setFavoriteFiles(prevFavorites => [...prevFavorites, file]);
+    }
+    
+    setFiles(prevFiles =>
+      prevFiles.map(f => (f.id === file.id ? { ...f, isFavorite: !f.isFavorite } : f))
+    );
+  };
+  const handlePageChange =(event,page)=>{
+    setCurrentPage(page);
+  }
+
+  const handleDownloadFile=(file)=>{
+    setDownloadFiles(prevDownloaded=>[...prevDownloaded,file]);
+  }
+  const handleFileClick=(file)=>{
+    const MAX_RECENT_FILES = 5;
+
+    if(!recentFiles.some(recentFiles=>recentFiles.id === file.id)){
+      const updatedRecentFiles =[file, ...recentFiles.slice(0,MAX_RECENT_FILES-1)];
+      setRecentFiles(updatedRecentFiles);
+    }
+  }
+
+  const [currentPage,setCurrentPage]=useState(1);
+  const foldersPerPage=6;
+  const totalPages = Math.ceil(folderData.length/foldersPerPage)
+  const filteredFiles = selectedFolder?filesData.filter(file=>file.folderIds.includes(selectedFolder)):filesData;
+
+  
+  return (
+    <div className="app">
+      <Grid container spacing ={2}>
+        <Grid item xs={3}>
+        <LeftSection folders={folderData.slice((currentPage-1)*foldersPerPage,currentPage*foldersPerPage)} onFolderClick={handleFolderClick} 
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}/>
+        </Grid>
+        <Grid item xs={6}>
+        <MiddleSection 
+
+        files={filteredFiles} onToggleFavorite={handleToggleFavorite} onDownloadFiles={handleDownloadFile} onFileClick={handleFileClick} />
+        </Grid>
+        <Grid item xs={3}>
+        <RightSection favoriteFiles={favoriteFiles} downloadedFiles={downloadFiles} recentFiles={recentFiles}/>
+
+        </Grid>
+      </Grid>
+      
+    </div>
+  );
+}
+
+export default App;
+
+// import React, { useState } from 'react';
+// import LeftSection from './components/LeftSection';
+// import MiddleSection from './components/MiddleSection';
+// import RightSection from './components/RightSection';
+// import Grid from '@mui/material/Grid';
+// import './App.css';
+// import filesData from './components/files.json';
+// import foldersData from './components/folders.json';
+
+
+// function App() {
+//   // const [folders, setFolders] = useState([
+//   //   { id: 1, name: 'Folder 1' },
+//   //   { id: 2, name: 'Folder 2' },
+//   //   // Add more folders as needed
+//   // ]);
+
+//   // const [files, setFiles] = useState([
+//   //   { id: 1, name: 'File 1.txt', folderId: 2 },
+//   //   { id: 2, name: 'File 2.pdf', folderId: 2 },
+//   //   // Add more files as needed
+//   // ]);
+
+//   const [selectedFolder, setSelectedFolder] = useState(null);
+//   const [favoriteFiles, setFavoriteFiles]=useState([]);
+//   const [downloadedFiles,setDownloadedFiles] = useState([]);
+//   const [recentFiles,setRecentFiles] = useState([]);
+
+//   const handleFolderClick = (folder) => {
+//     console.log("folder clicked",folder)
+//     setSelectedFolder(folder.Id);
+//   };
+
+//   const handleToggleFavorite=(file)=>{
+//     if(file.isFavorite){
+//       setFavoriteFiles(prevFavorites=>prevFavorites.filter(fav=>fav.id!== file.id));
+
+//     }
+//     else{
+//       setFavoriteFiles(prevFavorites=>[...prevFavorites,file]);
+//     }
+//     // setFiles(prevFiles=>
+//     //   prevFiles.map(f=>(f.id===file.id?{...f,isFavorite:!f.isFavorite}:f)))
+//   }
+
+//   const handleDownloadFile =(filesData)=>{
+//     setDownloadedFiles(prevDownloaded=>[...prevDownloaded,filesData])
+//   }
+//   const handleFileClick = (filesData) => {
+//     // Update recentFiles state
+//     const MAX_RECENT_FILES = 5; // Adjust the maximum number of recent files as needed
+
+//     // Check if the clicked file is already in the recentFiles array
+//     if (!recentFiles.some(recentFile => recentFile.id === filesData.id)) {
+//       // Add the clicked file to the beginning of the recentFiles array
+//       const updatedRecentFiles = [filesData, ...recentFiles.slice(0, MAX_RECENT_FILES - 1)];
+//       setRecentFiles(updatedRecentFiles);
+//     }
+//   };
+
+//   const filteredFiles = selectedFolder
+//   ? filesData.filter(file => {
+//     console.log("Selected folders:", selectedFolder);
+//     console.log("File folder id:",file.folderIds)
+
+//     return file.folderIds.includes(selectedFolder);}) : filesData;
+//   console.log("Filtered files:", filteredFiles);
+
+//   return (
+//     <div className="app">
+//       <Grid container spacing={2}>
+//         <Grid item xs={3}> {/* Left section */}
+//           <LeftSection folders={foldersData} onFolderClick={handleFolderClick} />
+//         </Grid>
+//         <Grid item xs={6}> {/* Middle section */}
+//           <MiddleSection 
+//           selectedFolder={selectedFolder}
+//           files={filteredFiles} 
+//           onToggleFavorite={handleToggleFavorite}
+//           onFileClick={handleFileClick}
+//           onDownloadFiles={handleDownloadFile} />
+//         </Grid>
+//         <Grid item xs={3}> {/* Right section */}
+//           <RightSection favoriteFiles={favoriteFiles}
+//           recentFiles={recentFiles}
+//           downloadedFiles={downloadedFiles} />
+//         </Grid>
+//       </Grid>
+//     </div>
+//   );
+// }
+
+// export default App;
+
