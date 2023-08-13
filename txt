@@ -1,55 +1,141 @@
-LeftSection.js
+// import React, { useState } from 'react';
+// import LeftSection from './components/LeftSection';
+// import MiddleSection from './components/MiddleSection';
+// import RightSection from './components/RightSection';
+// import Grid from '@mui/material/Grid';
+// import './App.css'
+// import folderData from './components/folders.json';
+// import filesData from './components/files.json'
 
-import { List, ListItem } from '@mui/material';
-import React, { useState } from 'react';
-import CompanyLogo from './CompanyLogo';
-import Folder from './Folder';
-import foldersData from './folders.json'
 
+// function App() {
+//   // const [folders, setFolders] = useState([
+//   //   { id: 1, name: 'Folder 1' },
+//   //   { id: 2, name: 'Folder 2' },
+//   //   { id: 3, name: 'Folder 3'},
+//   //   { id: 4, name: 'Folder 4'},
+//   //   { id: 5, name: 'Folder 5'},
+//   //   { id: 6, name: 'Folder 6'},
+//   //   { id: 7, name: 'Folder 7'},
+//   //   { id: 8, name: 'Folder 8'},
+//   //   { id: 9, name: 'Folder 10'},
 
-const FOLDERS_PER_PAGE = 10;
+//     // Add more folders as needed
+//   // ]);
 
-function LeftSection({ onFolderClick }) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(foldersData.length / FOLDERS_PER_PAGE);
+//   // const [files, setFiles] = useState([
+//   //   { id: 1, name: 'File 1.txt', folderId: 1 },
+//   //   { id: 2, name: 'File 2.pdf', folderId: 2 },
+//   //   { id: 3, name: 'File 3.pdf', folderId: 1 },
+//   //   { id: 3, name: 'File 3.pdf', folderId: 2 },
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+//   //   { id: 4, name: 'File 4.pdf', folderId: 1 },
+//   //   { id: 5, name: 'File 5.pdf', folderId: 3 },
+//   //   { id: 6, name: 'File 6.pdf', folderId: 3 },
+//   //   { id: 7, name: 'File 7.pdf', folderId: 1 },
+//   //   { id: 8, name: 'File 8.pdf', folderId: 2 },
+//   //   { id: 9, name: 'File 9.pdf', folderId: 1 },
+//   //   { id: 10, name: 'File 10.pdf', folderId: 3 },
+//   //   { id: 11, name: 'File 11.pdf', folderId: 1 },
+//   //   { id: 12, name: 'File 12.pdf', folderId: 2 },
+//   //   { id: 13, name: 'File 13.pdf', folderId: 3 },
+//   //   { id: 14, name: 'File 14.pdf', folderId: 1 },
+//   //   { id: 15, name: 'File 15.pdf', folderId: 2 },
+//   //   { id: 16, name: 'File 16.pdf', folderId: 3 },
+//   //   { id: 17, name: 'File 17.pdf', folderId: 1 },
+//   //   { id: 18, name: 'File 18.pdf', folderId: 2 },
+//   //   { id: 19, name: 'File 19.pdf', folderId: 3 },
+//   //   { id: 20, name: 'File 20.pdf', folderId: 1 },
+//   //   { id: 21, name: 'File 21.pdf', folderId: 2 },
+//   //   { id: 22, name: 'File 22.pdf', folderId: 3 },
+//   //   { id: 23, name: 'File 23.pdf', folderId: 1 },
+//   //   { id: 4, name: 'File 4.pdf', folderId: 4 },
+//   //   { id: 5, name: 'File 5.pdf', folderId: 5 },
+//   //   { id: 6, name: 'File 6.pdf', folderId: 6 },
+//   //   { id: 7, name: 'File 7.pdf', folderId: 7 },
+//   //   { id: 8, name: 'File 8.pdf', folderId: 8 },
+//   //   { id: 9, name: 'File 9.pdf', folderId: 9 },
+//   //   { id: 10, name: 'File 10.pdf', folderId: 4 },
+//   //   { id: 11, name: 'File 11.pdf', folderId: 5 },
+//   //   { id: 12, name: 'File 12.pdf', folderId: 6 },
+//   //   { id: 13, name: 'File 13.pdf', folderId: 7 },
+//   //   { id: 14, name: 'File 14.pdf', folderId: 8 },
+//   //   { id: 15, name: 'File 15.pdf', folderId: 9 },
+//   //   { id: 16, name: 'File 16.pdf', folderId: 4 },
+//   //   { id: 17, name: 'File 17.pdf', folderId: 5 },
+//   //   { id: 18, name: 'File 18.pdf', folderId: 6 },
+//   //   { id: 19, name: 'File 19.pdf', folderId: 7 },
+//   //   { id: 20, name: 'File 20.pdf', folderId: 8 },
+//   //   { id: 21, name: 'File 21.pdf', folderId: 9 },
+//   //   { id: 22, name: 'File 22.pdf', folderId: 4 },
+//   //   { id: 23, name: 'File 23.pdf', folderId: 5 },
+//   //   { id: 24, name: 'File 24.pdf', folderId: 6 },
+//   //   { id: 25, name: 'File 25.pdf', folderId: 7 },
+//   //   { id: 26, name: 'File 26.pdf', folderId: 9 },
+//   //   { id: 27, name: 'File 27.pdf', folderId: 4 },
+//   //   { id: 28, name: 'File 28.pdf', folderId: 5 },
+//   //   { id: 29, name: 'File 29.pdf', folderId: 6 },
+//   //   { id: 30, name: 'File 30.pdf', folderId: 7 },
+    
 
-  const startIndex = (currentPage - 1) * FOLDERS_PER_PAGE;
-  const visibleFolders = foldersData.slice(startIndex, startIndex + FOLDERS_PER_PAGE);
+//     // Add more files as needed
+//   // ]);
 
-  return (
-    <div className="left-section">
-      <CompanyLogo />
-      <List className="folder-list">
-        {foldersData.map(folder => (
-          <ListItem key={folder.id}
-            >
-              <Folder
-              
-            name={folder.name}
-            onClick={() => onFolderClick(folder.id)}
-          /></ListItem>
-        ))}
-      </List>
-      <div className="pagination">
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePageChange(index + 1)}
-            className={currentPage === index + 1 ? 'active' : ''}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
+//   const [selectedFolder, setSelectedFolder] = useState(null);
 
-export default LeftSection;
+//   const handleFolderClick = (folderId) => {
+//     setSelectedFolder(folderId);
+//   };
+//   const [favoriteFiles, setFavoriteFiles]= useState([]);
+//   const [downloadFiles, setDownloadFiles]= useState([]);
+//   const [recentFiles,setRecentFiles] = useState([]);
+  
+//   const handleToggleFavorite = (file) => {
+//     if (file.isFavorite) {
+//       setFavoriteFiles(prevFavorites => prevFavorites.filter(fav => fav.id !== file.id));
+//     } else {
+//       setFavoriteFiles(prevFavorites => [...prevFavorites, file]);
+//     }
+    
+//     setFiles(prevFiles =>
+//       prevFiles.map(f => (f.id === file.id ? { ...f, isFavorite: !f.isFavorite } : f))
+//     );
+//   };
+
+//   const handleDownloadFile=(file)=>{
+//     setDownloadFiles(prevDownloaded=>[...prevDownloaded,file]);
+//   }
+//   const handleFileClick=(file)=>{
+//     const MAX_RECENT_FILES = 5;
+
+//     if(!recentFiles.some(recentFiles=>recentFiles.id === file.id)){
+//       const updatedRecentFiles =[file, ...recentFiles.slice(0,MAX_RECENT_FILES-1)];
+//       setRecentFiles(updatedRecentFiles);
+//     }
+//   }
+
+//   const filteredFiles = selectedFolder?filesData.filter(file=>file.folderIds.includes(selectedFolder)):filesData;
+
+//   return (
+//     <div className="app">
+//       <Grid container spacing ={2}>
+//         <Grid item xs={3}>
+//         <LeftSection folders={folderData} onFolderClick={handleFolderClick} />
+//         </Grid>
+//         <Grid item xs={6}>
+//         <MiddleSection files={filteredFiles} onToggleFavorite={handleToggleFavorite} onDownloadFile={handleDownloadFile} onFileClick={handleFileClick} />
+//         </Grid>
+//         <Grid item xs={3}>
+//         <RightSection favoriteFiles={favoriteFiles} downloadedFiles={downloadFiles} recentFiles={recentFiles}/>
+
+//         </Grid>
+//       </Grid>
+      
+//     </div>
+//   );
+// }
+
+// export default App;
 
 import React, { useState } from 'react';
 import LeftSection from './components/LeftSection';
@@ -62,14 +148,26 @@ import foldersData from './components/folders.json';
 
 
 function App() {
+  // const [folders, setFolders] = useState([
+  //   { id: 1, name: 'Folder 1' },
+  //   { id: 2, name: 'Folder 2' },
+  //   // Add more folders as needed
+  // ]);
 
-const [selectedFolder, setSelectedFolder] = useState(null);
+  // const [files, setFiles] = useState([
+  //   { id: 1, name: 'File 1.txt', folderId: 2 },
+  //   { id: 2, name: 'File 2.pdf', folderId: 2 },
+  //   // Add more files as needed
+  // ]);
+
+  const [selectedFolder, setSelectedFolder] = useState(null);
   const [favoriteFiles, setFavoriteFiles]=useState([]);
   const [downloadedFiles,setDownloadedFiles] = useState([]);
   const [recentFiles,setRecentFiles] = useState([]);
 
-  const handleFolderClick = (folderId) => {
-    setSelectedFolder(folderId);
+  const handleFolderClick = (folderIds) => {
+    console.log("folder clicked",folderIds)
+    setSelectedFolder(folderIds);
   };
 
   const handleToggleFavorite=(file)=>{
@@ -80,8 +178,8 @@ const [selectedFolder, setSelectedFolder] = useState(null);
     else{
       setFavoriteFiles(prevFavorites=>[...prevFavorites,file]);
     }
-    setFiles(prevFiles=>
-      prevFiles.map(f=>(f.id===file.id?{...f,isFavorite:!f.isFavorite}:f)))
+    // setFiles(prevFiles=>
+    //   prevFiles.map(f=>(f.id===file.id?{...f,isFavorite:!f.isFavorite}:f)))
   }
 
   const handleDownloadFile =(file)=>{
@@ -100,13 +198,14 @@ const [selectedFolder, setSelectedFolder] = useState(null);
   };
 
   const filteredFiles = selectedFolder
-  ? filesData.filter(file => file.folderIds.includes(selectedFolder)) : filesData;
+  ? filesData.filter(file => file.folderId.includes(selectedFolder)) : filesData;
+  console.log("Filtered files:", filteredFiles);
 
   return (
     <div className="app">
       <Grid container spacing={2}>
         <Grid item xs={3}> {/* Left section */}
-          <LeftSection folders={foldersData} onFolderClick={handleFolderClick} />
+          <LeftSection foldersData={foldersData} onFolderClick={handleFolderClick} />
         </Grid>
         <Grid item xs={6}> {/* Middle section */}
           <MiddleSection files={filteredFiles} 
@@ -126,89 +225,95 @@ const [selectedFolder, setSelectedFolder] = useState(null);
 
 export default App;
 
-import React, { useState } from 'react';
-import { IconButton, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FileCopyIcon from '@mui/icons-material/FileCopy'; // Import the icon for file type
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import DownloadIcon from '@mui/icons-material/CloudDownload';
+// import React, { useState } from 'react';
+// import File from './File';
+// import TextField from '@mui/material/TextField';
+// import Table from '@mui/material/Table';
+// import TableBody from '@mui/material/TableBody';
+// import TableCell from '@mui/material/TableCell';
+// import TableContainer from '@mui/material/TableContainer';
+// import TableHead from '@mui/material/TableHead';
+// import TableRow from '@mui/material/TableRow';
+// import Paper from '@mui/material/Paper';
+// import FavoriteIcon from '@mui/icons-material/Favorite';
+// import IconButton from '@mui/material/IconButton';
+// import Grid from '@mui/material/Grid';
+// import DownloadIcon from '@mui/icons-material/CloudDownload';
+// import { InputAdornment } from '@mui/material';
+// import SearchIcon from '@mui/icons-material/Search';
+// import filesData from './files.json'
 
+// function MiddleSection({ files,onToggleFavorite,onDownloadFiles,onFileClick }) {
+//   const [searchTerm, setSearchTerm] = useState('');
 
-function RightSection({favoriteFiles,recentFiles, downloadedFiles}) {
-  // const [favoriteFiles, setFavoriteFiles] = useState([]);
+//   const filteredFiles = files.filter(file =>
+//     file.name.toLowerCase().includes(searchTerm.toLowerCase())
+//   );
 
-  // const handleToggleFavorite = (file) => {
-  //   if (favoriteFiles.includes(file)) {
-  //     setFavoriteFiles(prevFavorites => prevFavorites.filter(fav => fav !== file));
-  //   } else {
-  //     setFavoriteFiles(prevFavorites => [...prevFavorites, file]);
-  //   }
-  // };
+//   return (
+//     <div className="middle-section">
+//       {/* <Grid container spacing={2} alignItems="center">
+//         <Grid item xs={12}> */}
+//           <TextField
+//           style={{marginTop : "20 px"}}
+//             placeholder="Search files..."
+//             variant="outlined"
+//             fullWidth
+//             size='small'
+//             value={searchTerm}
+//             onChange={(e) => setSearchTerm(e.target.value)}
+//             InputProps={{
+//               startAdornment:(
+//                 <InputAdornment position='start'>
+//                   <SearchIcon />
+//                 </InputAdornment>
+//               ),
+//             }}
+//             InputLabelProps={{shrink: true}}
+//           />
+//         {/* </Grid>
+//       </Grid> */}
+//       <TableContainer component={Paper}>
+//         <Table stickyHeader>
+//           <TableHead>
+//             <TableRow>
+//               <TableCell>Name</TableCell>
+//               <TableCell>Date Uploaded</TableCell>
+//               <TableCell>Type</TableCell>
+//               <TableCell>Favorite</TableCell>
+//               <TableCell>Download</TableCell>
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {filteredFiles.map(file => (
+//               <TableRow key={file.id}>
+//                 <TableCell>
+//                   <span
+//                   className='clickable-file'
+//                   onClick={()=>onFileClick(file)}>{file.name}</span>
+//                 </TableCell>
+//                 <TableCell>{file.uploadDate}</TableCell>
+//                 <TableCell>{file.type}</TableCell>
+//                 <TableCell>
+//                   <IconButton onClick={()=>onToggleFavorite(file)}>
+//                     {file.isFavorite ? <FavoriteIcon color="secondary" /> : <FavoriteIcon />}
+//                   </IconButton>
+//                 </TableCell>
+//                 <TableCell>
+//                   <IconButton onClick={()=> onDownloadFiles(file)}>
+//                     <DownloadIcon/>
+//                   </IconButton>
+//                 </TableCell>
+//               </TableRow>
+//             ))}
+//           </TableBody>
+//         </Table>
+//       </TableContainer>
+//     </div>
+//   );
+// }
 
-  return (
-    <div className="right-section">
-      <IconButton className="notification-settings">
-        <NotificationsIcon />
-      </IconButton>
-      <IconButton className="profile-icon">
-        <AccountCircleIcon />
-      </IconButton>
-      <div className="file-sections">
-        <List>
-          {/* Favorites Section */}
-          <ListItem>
-            <ListItemIcon>
-              <FavoriteIcon />
-            </ListItemIcon>
-            <ListItemText primary="Favorite Files" />
-          </ListItem>
-          {favoriteFiles.map(file => (
-            <ListItem key={file.id}>
-              <ListItemIcon>
-                <FileCopyIcon /> {/* Replace with your desired file type icon */}
-              </ListItemIcon>
-              <ListItemText primary={file.name} />
-            </ListItem>
-          ))}
-           <ListItem>
-            <ListItemIcon>
-              <AccessTimeIcon />
-            </ListItemIcon>
-            <ListItemText primary="Recent Files" />
-          </ListItem>
-          {recentFiles.map(file => (
-            <ListItem key={file.id}>
-              <ListItemIcon>
-                <FileCopyIcon /> {/* Replace with your desired file type icon */}
-              </ListItemIcon>
-              <ListItemText primary={file.name} />
-            </ListItem>
-          ))}
-          <ListItem>
-            <ListItemIcon>
-              <DownloadIcon />
-            </ListItemIcon>
-            <ListItemText primary="Downloaded Files" />
-          </ListItem>
-          {downloadedFiles.map(file => (
-            <ListItem key={file.id}>
-              <ListItemIcon>
-                <FileCopyIcon /> {/* Replace with your desired file type icon */}
-              </ListItemIcon>
-              <ListItemText primary={file.name} />
-            </ListItem>
-          ))}
-          
-        </List>
-      </div>
-    </div>
-  );
-}
-
-export default RightSection;
+// export default MiddleSection;
 
 import React, { useState } from 'react';
 import File from './File';
@@ -300,50 +405,3 @@ function MiddleSection({ onToggleFavorite,onDownloadFiles,onFileClick }) {
 
 export default MiddleSection;
 
-[
-    { "id": 1, "name": "File 1.txt", "folderId": [1,3,8,9] },
-    { "id": 2, "name": "File 2.txt", "folderId": [2,3,7,5] },
-    { "id": 3, "name": "File 3.txt", "folderId": [1,2,3,4] },
-    { "id": 4, "name": "File 4.txt", "folderId": [2,3,6,8] },
-    { "id": 5, "name": "File 5.txt", "folderId": [4,2,3,5] },
-    { "id": 6, "name": "File 6.txt", "folderId": [1,6,2,3] },
-    { "id": 7, "name": "File 7.txt", "folderId": [4,6,8,5] },
-    { "id": 8, "name": "File 8.txt", "folderId": [1,5,7,9] },
-    { "id": 9, "name": "File 9.txt", "folderId": [3,4,8,2] },
-    { "id": 10, "name": "File 10.txt", "folderId": [9,6,4,2] },
-    { "id": 11, "name": "File 11.txt", "folderId": [5,7,3,1] },
-    { "id": 12, "name": "File 12.txt", "folderId": [1,3,7,8] },
-    { "id": 13, "name": "File 13.txt", "folderId": [5,3,8,9] },
-    { "id": 14, "name": "File 14.txt", "folderId": [2,3,1,4] },
-    { "id": 15, "name": "File 15.txt", "folderId": [9,8,7,6] },
-    { "id": 16, "name": "File 16.txt", "folderId": [6,5,4,2] },
-    { "id": 17, "name": "File 17.txt", "folderId": [5,2,1,8] },
-    { "id": 18, "name": "File 18.txt", "folderId": [7,3,5,1] },
-    { "id": 19, "name": "File 19.txt", "folderId": [6,5,2,8] },
-    { "id": 20, "name": "File 20.txt", "folderId": [4,3,2,1] },
-    { "id": 21, "name": "File 21.txt", "folderId": [7,4,6,9] },
-    { "id": 22, "name": "File 22.txt", "folderId": [2,6,8,9] },
-    { "id": 23, "name": "File 23.txt", "folderId": [1,5,7,9] },
-    { "id": 24, "name": "File 24.txt", "folderId": [2,6,9,3] },
-    { "id": 25, "name": "File 25.txt", "folderId": [1,5,7,6] },
-    { "id": 26, "name": "File 26.txt", "folderId": [2,6,4,3] },
-    { "id": 27, "name": "File 27.txt", "folderId": [2,9,8,6] },
-    { "id": 28, "name": "File 28.txt", "folderId": [2,3,6,9] },
-    { "id": 29, "name": "File 29.txt", "folderId": [5,8,9,3] },
-    { "id": 30, "name": "File 20.txt", "folderId": [5,7,8,1] }
-
-   
-  ]
-
-
-[
-   { "id": 1, "name": "Folder 1" },
-   { "id": 2, "name": "Folder 2" },
-   { "id": 3, "name": "Folder 3"},
-   { "id": 4, "name": "Folder 4"},
-   { "id": 5, "name": "Folder 5"},
-   { "id": 6, "name": "Folder 6"},
-   { "id": 7, "name": "Folder 7"},
-   { "id": 8, "name": "Folder 8"},
-   { "id": 9, "name": "Folder 9"}
-        ]
