@@ -1,18 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CompanyLogo from './CompanyLogo';
 import Folder from './Folder';
 
+const FOLDERS_PER_PAGE = 10;
+
 function LeftSection({ folders, onFolderClick }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(folders.length / FOLDERS_PER_PAGE);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const startIndex = (currentPage - 1) * FOLDERS_PER_PAGE;
+  const visibleFolders = folders.slice(startIndex, startIndex + FOLDERS_PER_PAGE);
+
   return (
     <div className="left-section">
       <CompanyLogo />
       <div className="folder-list">
-        {folders.map(folder => (
+        {visibleFolders.map(folder => (
           <Folder
             key={folder.id}
             name={folder.name}
             onClick={() => onFolderClick(folder.id)}
           />
+        ))}
+      </div>
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => handlePageChange(index + 1)}
+            className={currentPage === index + 1 ? 'active' : ''}
+          >
+            {index + 1}
+          </button>
         ))}
       </div>
     </div>
