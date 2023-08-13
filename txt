@@ -1,23 +1,65 @@
-import React from 'react';
-import CompanyLogo from './CompanyLogo';
-import Folder from './Folder';
-import List from '@mui/material/List';
+import React, { useState } from 'react';
+import File from './File';
+import TextField from '@mui/material/TextField';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import IconButton from '@mui/material/IconButton';
+import Grid from '@mui/material/Grid';
 
-function LeftSection({ folders, onFolderClick }) {
+function MiddleSection({ files }) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredFiles = files.filter(file =>
+    file.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="left-section">
-      <CompanyLogo />
-      <List className="folder-list">
-        {folders.map(folder => (
-          <Folder
-            key={folder.id}
-            name={folder.name}
-            onClick={() => onFolderClick(folder.id)}
+    <div className="middle-section">
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12}>
+          <TextField
+            label="Search files..."
+            variant="outlined"
+            fullWidth
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-        ))}
-      </List>
+        </Grid>
+      </Grid>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Date Uploaded</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Favorite</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredFiles.map(file => (
+              <TableRow key={file.id}>
+                <TableCell>{file.name}</TableCell>
+                <TableCell>{file.uploadDate}</TableCell>
+                <TableCell>{file.type}</TableCell>
+                <TableCell>
+                  <IconButton>
+                    {file.isFavorite ? <FavoriteIcon color="secondary" /> : <FavoriteIcon />}
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 }
 
-export default LeftSection;
+export default MiddleSection;
