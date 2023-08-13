@@ -1,12 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import File from './File';
 
 function MiddleSection({ files }) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredFiles = files.filter(file =>
+    file.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="middle-section">
-      {files.map(file => (
-        <File key={file.id} name={file.name} />
-      ))}
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search files..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+      <div className="file-list">
+        {filteredFiles.map(file => (
+          <File key={file.id} name={file.name} />
+        ))}
+      </div>
     </div>
   );
 }
