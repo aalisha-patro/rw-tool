@@ -1,556 +1,62 @@
-
-
-//     // Add more files as needed
-//   // ]);
-
-//   const [selectedFolder, setSelectedFolder] = useState(null);
-
-//   const handleFolderClick = (folderId) => {
-//     setSelectedFolder(folderId);
-//   };
-//   const [favoriteFiles, setFavoriteFiles]= useState([]);
-//   const [downloadFiles, setDownloadFiles]= useState([]);
-//   const [recentFiles,setRecentFiles] = useState([]);
-  
-//   const handleToggleFavorite = (file) => {
-//     if (file.isFavorite) {
-//       setFavoriteFiles(prevFavorites => prevFavorites.filter(fav => fav.id !== file.id));
-//     } else {
-//       setFavoriteFiles(prevFavorites => [...prevFavorites, file]);
-//     }
-    
-//     setFiles(prevFiles =>
-//       prevFiles.map(f => (f.id === file.id ? { ...f, isFavorite: !f.isFavorite } : f))
-//     );
-//   };
-
-//   const handleDownloadFile=(file)=>{
-//     setDownloadFiles(prevDownloaded=>[...prevDownloaded,file]);
-//   }
-//   const handleFileClick=(file)=>{
-//     const MAX_RECENT_FILES = 5;
-
-//     if(!recentFiles.some(recentFiles=>recentFiles.id === file.id)){
-//       const updatedRecentFiles =[file, ...recentFiles.slice(0,MAX_RECENT_FILES-1)];
-//       setRecentFiles(updatedRecentFiles);
-//     }
-//   }
-
-//   const filteredFiles = selectedFolder?filesData.filter(file=>file.folderIds.includes(selectedFolder)):filesData;
-
-//   return (
-//     <div className="app">
-//       <Grid container spacing ={2}>
-//         <Grid item xs={3}>
-//         <LeftSection folders={folderData} onFolderClick={handleFolderClick} />
-//         </Grid>
-//         <Grid item xs={6}>
-//         <MiddleSection files={filteredFiles} onToggleFavorite={handleToggleFavorite} onDownloadFile={handleDownloadFile} onFileClick={handleFileClick} />
-//         </Grid>
-//         <Grid item xs={3}>
-//         <RightSection favoriteFiles={favoriteFiles} downloadedFiles={downloadFiles} recentFiles={recentFiles}/>
-
-//         </Grid>
-//       </Grid>
-      
-//     </div>
-//   );
-// }
-
-// export default App;
-
-import React, { useState } from 'react';
-import LeftSection from './components/LeftSection';
-import MiddleSection from './components/MiddleSection';
-import RightSection from './components/RightSection';
-import Grid from '@mui/material/Grid';
-import './App.css';
-import filesData from './components/files.json';
-import foldersData from './components/folders.json';
-
-
-function App() {
-  // const [folders, setFolders] = useState([
-  //   { id: 1, name: 'Folder 1' },
-  //   { id: 2, name: 'Folder 2' },
-  //   // Add more folders as needed
-  // ]);
-
-  // const [files, setFiles] = useState([
-  //   { id: 1, name: 'File 1.txt', folderId: 2 },
-  //   { id: 2, name: 'File 2.pdf', folderId: 2 },
-  //   // Add more files as needed
-  // ]);
-
-  const [selectedFolder, setSelectedFolder] = useState(null);
-  const [favoriteFiles, setFavoriteFiles]=useState([]);
-  const [downloadedFiles,setDownloadedFiles] = useState([]);
-  const [recentFiles,setRecentFiles] = useState([]);
-
-  const handleFolderClick = (folderIds) => {
-    console.log("folder clicked",folderIds)
-    setSelectedFolder(folderIds);
-  };
-
-  const handleToggleFavorite=(file)=>{
-    if(file.isFavorite){
-      setFavoriteFiles(prevFavorites=>prevFavorites.filter(fav=>fav.id!== file.id));
-
-    }
-    else{
-      setFavoriteFiles(prevFavorites=>[...prevFavorites,file]);
-    }
-    // setFiles(prevFiles=>
-    //   prevFiles.map(f=>(f.id===file.id?{...f,isFavorite:!f.isFavorite}:f)))
-  }
-
-  const handleDownloadFile =(file)=>{
-    setDownloadedFiles(prevDownloaded=>[...prevDownloaded,file])
-  }
-  const handleFileClick = (file) => {
-    // Update recentFiles state
-    const MAX_RECENT_FILES = 5; // Adjust the maximum number of recent files as needed
-
-    // Check if the clicked file is already in the recentFiles array
-    if (!recentFiles.some(recentFile => recentFile.id === file.id)) {
-      // Add the clicked file to the beginning of the recentFiles array
-      const updatedRecentFiles = [file, ...recentFiles.slice(0, MAX_RECENT_FILES - 1)];
-      setRecentFiles(updatedRecentFiles);
-    }
-  };
-
-  const filteredFiles = selectedFolder
-  ? filesData.filter(file => file.folderId.includes(selectedFolder)) : filesData;
-  console.log("Filtered files:", filteredFiles);
-
-  return (
-    <div className="app">
-      <Grid container spacing={2}>
-        <Grid item xs={3}> {/* Left section */}
-          <LeftSection foldersData={foldersData} onFolderClick={handleFolderClick} />
-        </Grid>
-        <Grid item xs={6}> {/* Middle section */}
-          <MiddleSection files={filteredFiles} 
-          onToggleFavorite={handleToggleFavorite}
-          onFileClick={handleFileClick}
-          onDownloadFiles={handleDownloadFile} />
-        </Grid>
-        <Grid item xs={3}> {/* Right section */}
-          <RightSection favoriteFiles={favoriteFiles}
-          recentFiles={recentFiles}
-          downloadedFiles={downloadedFiles} />
-        </Grid>
-      </Grid>
-    </div>
-  );
-}
-
-export default App;
-
-// import React, { useState } from 'react';
-// import File from './File';
-// import TextField from '@mui/material/TextField';
-// import Table from '@mui/material/Table';
-// import TableBody from '@mui/material/TableBody';
-// import TableCell from '@mui/material/TableCell';
-// import TableContainer from '@mui/material/TableContainer';
-// import TableHead from '@mui/material/TableHead';
-// import TableRow from '@mui/material/TableRow';
-// import Paper from '@mui/material/Paper';
-// import FavoriteIcon from '@mui/icons-material/Favorite';
-// import IconButton from '@mui/material/IconButton';
-// import Grid from '@mui/material/Grid';
-// import DownloadIcon from '@mui/icons-material/CloudDownload';
-// import { InputAdornment } from '@mui/material';
-// import SearchIcon from '@mui/icons-material/Search';
-// import filesData from './files.json'
-
-// function MiddleSection({ files,onToggleFavorite,onDownloadFiles,onFileClick }) {
-//   const [searchTerm, setSearchTerm] = useState('');
-
-//   const filteredFiles = files.filter(file =>
-//     file.name.toLowerCase().includes(searchTerm.toLowerCase())
-//   );
-
-//   return (
-//     <div className="middle-section">
-//       {/* <Grid container spacing={2} alignItems="center">
-//         <Grid item xs={12}> */}
-//           <TextField
-//           style={{marginTop : "20 px"}}
-//             placeholder="Search files..."
-//             variant="outlined"
-//             fullWidth
-//             size='small'
-//             value={searchTerm}
-//             onChange={(e) => setSearchTerm(e.target.value)}
-//             InputProps={{
-//               startAdornment:(
-//                 <InputAdornment position='start'>
-//                   <SearchIcon />
-//                 </InputAdornment>
-//               ),
-//             }}
-//             InputLabelProps={{shrink: true}}
-//           />
-//         {/* </Grid>
-//       </Grid> */}
-//       <TableContainer component={Paper}>
-//         <Table stickyHeader>
-//           <TableHead>
-//             <TableRow>
-//               <TableCell>Name</TableCell>
-//               <TableCell>Date Uploaded</TableCell>
-//               <TableCell>Type</TableCell>
-//               <TableCell>Favorite</TableCell>
-//               <TableCell>Download</TableCell>
-//             </TableRow>
-//           </TableHead>
-//           <TableBody>
-//             {filteredFiles.map(file => (
-//               <TableRow key={file.id}>
-//                 <TableCell>
-//                   <span
-//                   className='clickable-file'
-//                   onClick={()=>onFileClick(file)}>{file.name}</span>
-//                 </TableCell>
-//                 <TableCell>{file.uploadDate}</TableCell>
-//                 <TableCell>{file.type}</TableCell>
-//                 <TableCell>
-//                   <IconButton onClick={()=>onToggleFavorite(file)}>
-//                     {file.isFavorite ? <FavoriteIcon color="secondary" /> : <FavoriteIcon />}
-//                   </IconButton>
-//                 </TableCell>
-//                 <TableCell>
-//                   <IconButton onClick={()=> onDownloadFiles(file)}>
-//                     <DownloadIcon/>
-//                   </IconButton>
-//                 </TableCell>
-//               </TableRow>
-//             ))}
-//           </TableBody>
-//         </Table>
-//       </TableContainer>
-//     </div>
-//   );
-// }
-
-// export default MiddleSection;
-
-import React, { useState } from 'react';
-import File from './File';
-import TextField from '@mui/material/TextField';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import IconButton from '@mui/material/IconButton';
-import Grid from '@mui/material/Grid';
-import DownloadIcon from '@mui/icons-material/CloudDownload';
-import { InputAdornment } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import filesData from './files.json'
-
-function MiddleSection({ onToggleFavorite,onDownloadFiles,onFileClick }) {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredFiles = filesData.filter(file =>
-    file.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return (
-    <div className="middle-section">
-      {/* <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12}> */}
-          <TextField
-          style={{marginTop : "20 px"}}
-            placeholder="Search files..."
-            variant="outlined"
-            fullWidth
-            size='small'
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            InputProps={{
-              startAdornment:(
-                <InputAdornment position='start'>
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            InputLabelProps={{shrink: true}}
-          />
-        {/* </Grid>
-      </Grid> */}
-      <TableContainer component={Paper}>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Date Uploaded</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Favorite</TableCell>
-              <TableCell>Download</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredFiles.map(file => (
-              <TableRow key={file.id}>
-                <TableCell>
-                  <span
-                  className='clickable-file'
-                  onClick={()=>onFileClick(file)}>{file.name}</span>
-                </TableCell>
-                <TableCell>{file.uploadDate}</TableCell>
-                <TableCell>{file.type}</TableCell>
-                <TableCell>
-                  <IconButton onClick={()=>onToggleFavorite(file)}>
-                    {file.isFavorite ? <FavoriteIcon color="secondary" /> : <FavoriteIcon />}
-                  </IconButton>
-                </TableCell>
-                <TableCell>
-                  <IconButton onClick={()=> onDownloadFiles(file)}>
-                    <DownloadIcon/>
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
-  );
-}
-
-export default MiddleSection;
-[
-    { "id": 1, "name": "File 1.txt", "folderIds": [1,3,8,9] },
-    { "id": 2, "name": "File 2.txt", "folderIds": [2,3,7,5] },
-    { "id": 3, "name": "File 3.txt", "folderIds": [1,2,3,4] },
-    { "id": 4, "name": "File 4.txt", "folderIds": [2,3,6,8] },
-    { "id": 5, "name": "File 5.txt", "folderIds": [4,2,3,5] },
-    { "id": 6, "name": "File 6.txt", "folderIds": [1,6,2,3] },
-    { "id": 7, "name": "File 7.txt", "folderIds": [4,6,8,5] },
-    { "id": 8, "name": "File 8.txt", "folderIds": [1,5,7,9] },
-    { "id": 9, "name": "File 9.txt", "folderIds": [3,4,8,2] },
-    { "id": 10, "name": "File 10.txt", "folderIds": [9,6,4,2] },
-    { "id": 11, "name": "File 11.txt", "folderIds": [5,7,3,1] },
-    { "id": 12, "name": "File 12.txt", "folderIds": [1,3,7,8] },
-    { "id": 13, "name": "File 13.txt", "folderIds": [5,3,8,9] },
-    { "id": 14, "name": "File 14.txt", "folderIds": [2,3,1,4] },
-    { "id": 15, "name": "File 15.txt", "folderIds": [9,8,7,6] },
-    { "id": 16, "name": "File 16.txt", "folderIds": [6,5,4,2] },
-    { "id": 17, "name": "File 17.txt", "folderIds": [5,2,1,8] },
-    { "id": 18, "name": "File 18.txt", "folderIds": [7,3,5,1] },
-    { "id": 19, "name": "File 19.txt", "folderIds": [6,5,2,8] },
-    { "id": 20, "name": "File 20.txt", "folderIds": [4,3,2,1] },
-    { "id": 21, "name": "File 21.txt", "folderIds": [7,4,6,9] },
-    { "id": 22, "name": "File 22.txt", "folderIds": [2,6,8,9] },
-    { "id": 23, "name": "File 23.txt", "folderIds": [1,5,7,9] },
-    { "id": 24, "name": "File 24.txt", "folderIds": [2,6,9,3] },
-    { "id": 25, "name": "File 25.txt", "folderIds": [1,5,7,6] },
-    { "id": 26, "name": "File 26.txt", "folderIds": [2,6,4,3] },
-    { "id": 27, "name": "File 27.txt", "folderIds": [2,9,8,6] },
-    { "id": 28, "name": "File 28.txt", "folderIds": [2,3,6,9] },
-    { "id": 29, "name": "File 29.txt", "folderIds": [5,8,9,3] },
-    { "id": 30, "name": "File 20.txt", "folderIds": [5,7,8,1] }
-
-   
-  ]
-[
-   { "id": 1, "name": "Folder 1" },
-   { "id": 2, "name": "Folder 2" },
-   { "id": 3, "name": "Folder 3"},
-   { "id": 4, "name": "Folder 4"},
-   { "id": 5, "name": "Folder 5"},
-   { "id": 6, "name": "Folder 6"},
-   { "id": 7, "name": "Folder 7"},
-   { "id": 8, "name": "Folder 8"},
-   { "id": 9, "name": "Folder 9"}
-    
-    ]
-// import React, { useState } from 'react';
-// import File from './File';
-// import TextField from '@mui/material/TextField';
-// import Table from '@mui/material/Table';
-// import TableBody from '@mui/material/TableBody';
-// import TableCell from '@mui/material/TableCell';
-// import TableContainer from '@mui/material/TableContainer';
-// import TableHead from '@mui/material/TableHead';
-// import TableRow from '@mui/material/TableRow';
-// import Paper from '@mui/material/Paper';
-// import FavoriteIcon from '@mui/icons-material/Favorite';
-// import IconButton from '@mui/material/IconButton';
-// import Grid from '@mui/material/Grid';
-// import DownloadIcon from '@mui/icons-material/CloudDownload';
-// import { InputAdornment } from '@mui/material';
-// import SearchIcon from '@mui/icons-material/Search';
-// import filesData from './files.json'
-
-// function MiddleSection({ files,onToggleFavorite,onDownloadFiles,onFileClick }) {
-//   const [searchTerm, setSearchTerm] = useState('');
-
-//   const filteredFiles = files.filter(file =>
-//     file.name.toLowerCase().includes(searchTerm.toLowerCase())
-//   );
-
-//   return (
-//     <div className="middle-section">
-//       {/* <Grid container spacing={2} alignItems="center">
-//         <Grid item xs={12}> */}
-//           <TextField
-//           style={{marginTop : "20 px"}}
-//             placeholder="Search files..."
-//             variant="outlined"
-//             fullWidth
-//             size='small'
-//             value={searchTerm}
-//             onChange={(e) => setSearchTerm(e.target.value)}
-//             InputProps={{
-//               startAdornment:(
-//                 <InputAdornment position='start'>
-//                   <SearchIcon />
-//                 </InputAdornment>
-//               ),
-//             }}
-//             InputLabelProps={{shrink: true}}
-//           />
-//         {/* </Grid>
-//       </Grid> */}
-//       <TableContainer component={Paper}>
-//         <Table stickyHeader>
-//           <TableHead>
-//             <TableRow>
-//               <TableCell>Name</TableCell>
-//               <TableCell>Date Uploaded</TableCell>
-//               <TableCell>Type</TableCell>
-//               <TableCell>Favorite</TableCell>
-//               <TableCell>Download</TableCell>
-//             </TableRow>
-//           </TableHead>
-//           <TableBody>
-//             {filteredFiles.map(file => (
-//               <TableRow key={file.id}>
-//                 <TableCell>
-//                   <span
-//                   className='clickable-file'
-//                   onClick={()=>onFileClick(file)}>{file.name}</span>
-//                 </TableCell>
-//                 <TableCell>{file.uploadDate}</TableCell>
-//                 <TableCell>{file.type}</TableCell>
-//                 <TableCell>
-//                   <IconButton onClick={()=>onToggleFavorite(file)}>
-//                     {file.isFavorite ? <FavoriteIcon color="secondary" /> : <FavoriteIcon />}
-//                   </IconButton>
-//                 </TableCell>
-//                 <TableCell>
-//                   <IconButton onClick={()=> onDownloadFiles(file)}>
-//                     <DownloadIcon/>
-//                   </IconButton>
-//                 </TableCell>
-//               </TableRow>
-//             ))}
-//           </TableBody>
-//         </Table>
-//       </TableContainer>
-//     </div>
-//   );
-// }
-
-// export default MiddleSection;
-
-import React, { useState } from 'react';
-import File from './File';
-import TextField from '@mui/material/TextField';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import IconButton from '@mui/material/IconButton';
-import Grid from '@mui/material/Grid';
-import DownloadIcon from '@mui/icons-material/CloudDownload';
-import { InputAdornment } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import filesData from './files.json'
-
-function MiddleSection({ onToggleFavorite,onDownloadFiles,onFileClick }) {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredFiles = filesData.filter(file =>
-    file.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return (
-    <div className="middle-section">
-      {/* <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12}> */}
-          <TextField
-          style={{marginTop : "20 px"}}
-            placeholder="Search files..."
-            variant="outlined"
-            fullWidth
-            size='small'
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            InputProps={{
-              startAdornment:(
-                <InputAdornment position='start'>
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            InputLabelProps={{shrink: true}}
-          />
-        {/* </Grid>
-      </Grid> */}
-      <TableContainer component={Paper}>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Date Uploaded</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Favorite</TableCell>
-              <TableCell>Download</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredFiles.map(file => (
-              <TableRow key={file.id}>
-                <TableCell>
-                  <span
-                  className='clickable-file'
-                  onClick={()=>onFileClick(file)}>{file.name}</span>
-                </TableCell>
-                <TableCell>{file.uploadDate}</TableCell>
-                <TableCell>{file.type}</TableCell>
-                <TableCell>
-                  <IconButton onClick={()=>onToggleFavorite(file)}>
-                    {file.isFavorite ? <FavoriteIcon color="secondary" /> : <FavoriteIcon />}
-                  </IconButton>
-                </TableCell>
-                <TableCell>
-                  <IconButton onClick={()=> onDownloadFiles(file)}>
-                    <DownloadIcon/>
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
-  );
-}
-
-export default MiddleSection;
-
-
-
+folder clicked {id: 1, name: 'Folder 1'}id: 1name: "Folder 1"[[Prototype]]: Object
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [1, 3, 8, 9]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [2, 3, 7, 5]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [1, 2, 3, 4]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [2, 3, 6, 8]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [4, 2, 3, 5]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [1, 6, 2, 3]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [4, 6, 8, 5]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [1, 5, 7, 9]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [3, 4, 8, 2]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [9, 6, 4, 2]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [5, 7, 3, 1]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [1, 3, 7, 8]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [5, 3, 8, 9]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [2, 3, 1, 4]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [9, 8, 7, 6]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [6, 5, 4, 2]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [5, 2, 1, 8]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [7, 3, 5, 1]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [6, 5, 2, 8]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [4, 3, 2, 1]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [7, 4, 6, 9]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [2, 6, 8, 9]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [1, 5, 7, 9]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [2, 6, 9, 3]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [1, 5, 7, 6]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [2, 6, 4, 3]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [2, 9, 8, 6]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [2, 3, 6, 9]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [5, 8, 9, 3]
+App.js:202 Selected folders: {id: 1, name: 'Folder 1'}
+App.js:203 File folder id: (4) [5, 7, 8, 1]
+App.js:206 Filtered files: []
