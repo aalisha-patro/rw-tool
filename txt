@@ -33,7 +33,7 @@ function MiddleSection({ files }) {
         </Grid>
       </Grid>
       <TableContainer component={Paper}>
-        <Table>
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
