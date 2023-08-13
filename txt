@@ -1,34 +1,81 @@
-import React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import Grid from '@mui/material/Grid';
+import React, { useState } from 'react';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import Select from '@mui/material/Select';
+import { DateRangePicker } from '@mui/lab';
+import TextField from '@mui/material/TextField';
 
-function TopBar() {
+function MiddleSection({ onToggleFavorite, onDownloadFiles, onFileClick }) {
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedFileType, setSelectedFileType] = useState('');
+  const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
+
+  const handleFileTypeChange = (event) => {
+    setSelectedFileType(event.target.value);
+  };
+
+  const handleDateRangeChange = (newValue) => {
+    setSelectedDateRange(newValue);
+  };
+
+  const filteredFiles = filesData
+    .filter((file) => {
+      if (selectedFileType === '') {
+        return true; // No filter applied
+      }
+      return file.type === selectedFileType;
+    })
+    .filter((file) => {
+      const uploadDate = new Date(file.uploadDate);
+      const startDate = selectedDateRange[0];
+      const endDate = selectedDateRange[1];
+
+      if (!startDate || !endDate) {
+        return true; // No filter applied
+      }
+
+      return uploadDate >= startDate && uploadDate <= endDate;
+    });
+
   return (
-    <AppBar position="static">
-      <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          My App
-        </Typography>
-        <Grid container alignItems="center" spacing={2}>
-          <Grid item>
-            <IconButton color="inherit">
-              <NotificationsIcon />
-            </IconButton>
-          </Grid>
-          <Grid item>
-            <IconButton color="inherit">
-              <AccountCircleIcon />
-            </IconButton>
-          </Grid>
-        </Grid>
-      </Toolbar>
-    </AppBar>
+    <div className="middle-section">
+      <div>
+        {/* Button to toggle filters */}
+        <Button onClick={() => setShowFilters(!showFilters)}>
+          Show Filters
+        </Button>
+
+        {/* Filters dropdowns */}
+        {showFilters && (
+          <div>
+            {/* Dropdown for filtering file type */}
+            <Select value={selectedFileType} onChange={handleFileTypeChange}>
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="PDF">PDF</MenuItem>
+              <MenuItem value="Word">Word</MenuItem>
+              {/* Add more file types */}
+            </Select>
+
+            {/* Date Range Picker */}
+            <DateRangePicker
+              startText="Start Date"
+              endText="End Date"
+              value={selectedDateRange}
+              onChange={handleDateRangeChange}
+              renderInput={(startProps, endProps) => (
+                <React.Fragment>
+                  <TextField {...startProps} size="small" variant="outlined" />
+                  <TextField {...endProps} size="small" variant="outlined" />
+                </React.Fragment>
+              )}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Rest of your code */}
+    </div>
   );
 }
 
-export default TopBar;
+export default MiddleSection;
