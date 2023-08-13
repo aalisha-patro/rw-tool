@@ -1,20 +1,14 @@
 import React from 'react';
-import CompanyLogo from './CompanyLogo';
-import Folder from './Folder';
+import File from './File';
 
-function LeftSection({ folders, onFolderClick }) {
+function MiddleSection({ files }) {
   return (
-    <div className="left-section">
-      <CompanyLogo />
-      {folders.map(folder => (
-        <Folder
-          key={folder.id}
-          name={folder.name}
-          onClick={() => onFolderClick(folder.id)}
-        />
+    <div className="middle-section">
+      {files.map(file => (
+        <File key={file.id} name={file.name} />
       ))}
     </div>
   );
 }
 
-export default LeftSection;
+export default MiddleSection;
