@@ -1,11 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
+import LeftSection from './components/LeftSection';
+import MiddleSection from './components/MiddleSection';
+import RightSection from './components/RightSection';
 
-function RightSection() {
+function App() {
+  const [selectedFolder, setSelectedFolder] = useState(null);
+  const folders = [
+    { id: 1, name: 'Folder 1' },
+    { id: 2, name: 'Folder 2' },
+    // Add more folders as needed
+  ];
+
+  const files = [
+    { id: 1, name: 'File 1.txt' },
+    { id: 2, name: 'File 2.pdf' },
+    // Add more files as needed
+  ];
+
+  const handleFolderClick = (folderId) => {
+    setSelectedFolder(folderId);
+  };
+
   return (
-    <div className="right-section">
-      {/* Your content */}
+    <div className="app">
+      <LeftSection folders={folders} onFolderClick={handleFolderClick} />
+      <MiddleSection files={files} />
+      <RightSection />
     </div>
   );
 }
 
-export default RightSection;
+export default App;
