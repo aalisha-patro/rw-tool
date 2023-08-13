@@ -1,81 +1,31 @@
-import React, { useState } from 'react';
-import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
-import Select from '@mui/material/Select';
-import { DateRangePicker } from '@mui/lab';
-import TextField from '@mui/material/TextField';
+<ListItem>
+            <ListItemIcon>
+              <FavoriteIcon />
+            </ListItemIcon>
+            <ListItemText primary="Favorite Files" />
+          </ListItem>
+          {favoriteFiles.map(file => (
+            <ListItem key={file.id}>
+              <ListItemIcon>
+                <FileCopyIcon />
+              </ListItemIcon>
+              <ListItemText primary={file.name} />
+            </ListItem>
 
-function MiddleSection({ onToggleFavorite, onDownloadFiles, onFileClick }) {
-  const [showFilters, setShowFilters] = useState(false);
-  const [selectedFileType, setSelectedFileType] = useState('');
-  const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
+ <TableCell>
+                  <IconButton onClick={()=>onToggleFavorite(file)}>
+                    {file.isFavorite ? <FavoriteIcon style={{color:"green"}} /> : <FavoriteIcon />}
+                  </IconButton>
+                </TableCell>
 
-  const handleFileTypeChange = (event) => {
-    setSelectedFileType(event.target.value);
+const handleToggleFavorite = (file) => {
+    if (file.isFavorite) {
+      setFavoriteFiles(prevFavorites => prevFavorites.filter(fav => fav.id !== file.id));
+    } else {
+      setFavoriteFiles(prevFavorites => [...prevFavorites, file]);
+    }
+    
+    setFiles(prevFiles =>
+      prevFiles.map(f => (f.id === file.id ? { ...f, isFavorite: !f.isFavorite } : f))
+    );
   };
-
-  const handleDateRangeChange = (newValue) => {
-    setSelectedDateRange(newValue);
-  };
-
-  const filteredFiles = filesData
-    .filter((file) => {
-      if (selectedFileType === '') {
-        return true; // No filter applied
-      }
-      return file.type === selectedFileType;
-    })
-    .filter((file) => {
-      const uploadDate = new Date(file.uploadDate);
-      const startDate = selectedDateRange[0];
-      const endDate = selectedDateRange[1];
-
-      if (!startDate || !endDate) {
-        return true; // No filter applied
-      }
-
-      return uploadDate >= startDate && uploadDate <= endDate;
-    });
-
-  return (
-    <div className="middle-section">
-      <div>
-        {/* Button to toggle filters */}
-        <Button onClick={() => setShowFilters(!showFilters)}>
-          Show Filters
-        </Button>
-
-        {/* Filters dropdowns */}
-        {showFilters && (
-          <div>
-            {/* Dropdown for filtering file type */}
-            <Select value={selectedFileType} onChange={handleFileTypeChange}>
-              <MenuItem value="">All</MenuItem>
-              <MenuItem value="PDF">PDF</MenuItem>
-              <MenuItem value="Word">Word</MenuItem>
-              {/* Add more file types */}
-            </Select>
-
-            {/* Date Range Picker */}
-            <DateRangePicker
-              startText="Start Date"
-              endText="End Date"
-              value={selectedDateRange}
-              onChange={handleDateRangeChange}
-              renderInput={(startProps, endProps) => (
-                <React.Fragment>
-                  <TextField {...startProps} size="small" variant="outlined" />
-                  <TextField {...endProps} size="small" variant="outlined" />
-                </React.Fragment>
-              )}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Rest of your code */}
-    </div>
-  );
-}
-
-export default MiddleSection;
