@@ -1,31 +1,23 @@
-<ListItem>
-            <ListItemIcon>
-              <FavoriteIcon />
-            </ListItemIcon>
-            <ListItemText primary="Favorite Files" />
-          </ListItem>
-          {favoriteFiles.map(file => (
-            <ListItem key={file.id}>
-              <ListItemIcon>
-                <FileCopyIcon />
-              </ListItemIcon>
-              <ListItemText primary={file.name} />
-            </ListItem>
+import { useState, useEffect } from 'react';
 
- <TableCell>
-                  <IconButton onClick={()=>onToggleFavorite(file)}>
-                    {file.isFavorite ? <FavoriteIcon style={{color:"green"}} /> : <FavoriteIcon />}
-                  </IconButton>
-                </TableCell>
+// ... your other code ...
 
-const handleToggleFavorite = (file) => {
-    if (file.isFavorite) {
-      setFavoriteFiles(prevFavorites => prevFavorites.filter(fav => fav.id !== file.id));
-    } else {
-      setFavoriteFiles(prevFavorites => [...prevFavorites, file]);
-    }
-    
-    setFiles(prevFiles =>
-      prevFiles.map(f => (f.id === file.id ? { ...f, isFavorite: !f.isFavorite } : f))
-    );
+const debounce = (func, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func(...args);
+    }, delay);
   };
+};
+
+// ... your other code ...
+
+const debouncedToggleFavorite = debounce(handleToggleFavorite, 300); // Adjust the delay as needed
+
+// ... your other code ...
+
+<IconButton onClick={() => debouncedToggleFavorite(file)}>
+  {file.isFavorite ? <FavoriteIcon style={{ color: "green" }} /> : <FavoriteIcon />}
+</IconButton>
