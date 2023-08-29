@@ -1,9 +1,27 @@
-appbar- left side logo, right-notification,profile
+import React from "react";
+import { AppBar, Toolbar, Typography, IconButton } from "@material-ui/core";
+import MenuIcon from "@material-ui/icons/Menu";
+import NotificationsIcon from "@material-ui/icons/Notifications";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
-sidebar - home,fav,recnt,
-breadcrumbs(shows present folder and subsequent folders while entering)
-main- searchbar right side - filter (by date,type) download,print
-folders
+const AppBarComponent = () => {
+  return (
+    <AppBar position="static">
+      <Toolbar>
+        <IconButton edge="start" color="inherit" aria-label="menu">
+          <MenuIcon />
+        </IconButton>
+        <Typography variant="h6">Logo</Typography>
+        <div style={{ flexGrow: 1 }} />
+        <IconButton color="inherit">
+          <NotificationsIcon />
+        </IconButton>
+        <IconButton color="inherit">
+          <AccountCircleIcon />
+        </IconButton>
+      </Toolbar>
+    </AppBar>
+  );
+};
 
-profile-myaccount, logout
-
+export default AppBarComponent;
