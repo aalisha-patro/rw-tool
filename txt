@@ -1,27 +1,32 @@
 import React from "react";
-import { AppBar, Toolbar, Typography, IconButton } from "@material-ui/core";
-import MenuIcon from "@material-ui/icons/Menu";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import { List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
+import HomeIcon from "@material-ui/icons/Home";
+import StarIcon from "@material-ui/icons/Star";
+import ScheduleIcon from "@material-ui/icons/Schedule";
 
-const AppBarComponent = () => {
+const Sidebar = () => {
   return (
-    <AppBar position="static">
-      <Toolbar>
-        <IconButton edge="start" color="inherit" aria-label="menu">
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6">Logo</Typography>
-        <div style={{ flexGrow: 1 }} />
-        <IconButton color="inherit">
-          <NotificationsIcon />
-        </IconButton>
-        <IconButton color="inherit">
-          <AccountCircleIcon />
-        </IconButton>
-      </Toolbar>
-    </AppBar>
+    <List>
+      <ListItem button>
+        <ListItemIcon>
+          <HomeIcon />
+        </ListItemIcon>
+        <ListItemText primary="Home" />
+      </ListItem>
+      <ListItem button>
+        <ListItemIcon>
+          <StarIcon />
+        </ListItemIcon>
+        <ListItemText primary="Favorites" />
+      </ListItem>
+      <ListItem button>
+        <ListItemIcon>
+          <ScheduleIcon />
+        </ListItemIcon>
+        <ListItemText primary="Recent" />
+      </ListItem>
+    </List>
   );
 };
 
-export default AppBarComponent;
+export default Sidebar;
