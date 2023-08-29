@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { Container, Paper, TextField, Button, Grid, FormControl, Select, MenuItem } from "@material-ui/core";
+import { Container, Paper, TextField, Grid, FormControl, Select, MenuItem } from "@material-ui/core";
 import FolderIcon from "@material-ui/icons/Folder";
-import FileIcon from "@material-ui/icons/InsertDriveFile";
 import Breadcrumbs from "./Breadcrumbs"; // Import your Breadcrumbs component
 
 const MainContent = ({ folders }) => {
@@ -25,14 +24,9 @@ const MainContent = ({ folders }) => {
     }
   };
 
-  const handleFilter = () => {
-    let filteredFolders = folders;
-
-    if (filterType !== "all") {
-      filteredFolders = folders.filter((folder) => folder.type === filterType);
-    }
-
-    setCurrentFolders(filteredFolders);
+  const handleFilter = (event) => {
+    setFilterType(event.target.value);
+    filterFoldersByType(event.target.value);
   };
 
   const filterFolders = (foldersArray, searchTerm) => {
@@ -40,6 +34,15 @@ const MainContent = ({ folders }) => {
       const folderName = folder.name.toLowerCase();
       return folderName.includes(searchTerm);
     });
+  };
+
+  const filterFoldersByType = (type) => {
+    if (type === "all") {
+      setCurrentFolders(folders);
+    } else {
+      const filteredFolders = folders.filter((folder) => folder.type === type);
+      setCurrentFolders(filteredFolders);
+    }
   };
 
   return (
@@ -55,13 +58,10 @@ const MainContent = ({ folders }) => {
           value={searchInput}
           onChange={handleSearch}
         />
-        <Button variant="contained" color="primary" onClick={handleFilter}>
-          Filter
-        </Button>
         <FormControl>
           <Select
             value={filterType}
-            onChange={(event) => setFilterType(event.target.value)}
+            onChange={handleFilter}
             displayEmpty
           >
             <MenuItem value="all">All</MenuItem>
