@@ -1,14 +1,9 @@
-{breadcrumbs.map((breadcrumb, index) => (
-            <Typography
-              variant="body1"
-              color="textSecondary"
-              key={breadcrumb.name}
-            >
-              {index > 0 && ">"}
-              {index === breadcrumbs.length - 1 ? (
-                <span>{breadcrumb.name}</span>
-              ) : (
-                <a href={breadcrumb.path}>{breadcrumb.name}</a>
-              )}
-            </Typography>
-          ))}
+appbar- left side logo, right-notification,profile
+
+sidebar - home,fav,recnt,
+breadcrumbs(shows present folder and subsequent folders while entering)
+main- searchbar right side - filter (by date,type) download,print
+folders
+
+profile-myaccount, logout
+
