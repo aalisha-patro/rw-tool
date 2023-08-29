@@ -1,30 +1,51 @@
 import React from "react";
-import { Container, Paper, TextField, Button, Grid } from "@material-ui/core";
-import FolderIcon from "@material-ui/icons/Folder";
-import FileIcon from "@material-ui/icons/InsertDriveFile";
+import {
+  Menu,
+  MenuItem,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+} from "@material-ui/core";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
-const MainContent = () => {
+const ProfileMenu = () => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
-    <Container>
-      <Paper elevation={3} style={{ padding: "20px", marginBottom: "20px" }}>
-        {/* Breadcrumbs will go here */}
-      </Paper>
-      <Paper elevation={3} style={{ padding: "20px", marginBottom: "20px" }}>
-        {/* Search bar and filters will go here */}
-      </Paper>
-      <Grid container spacing={3}>
-        <Grid item xs={3}>
-          <FolderIcon />
-          <span>Folder Name</span>
-        </Grid>
-        <Grid item xs={3}>
-          <FileIcon />
-          <span>File Name</span>
-        </Grid>
-        {/* Other folder and file items */}
-      </Grid>
-    </Container>
+    <div>
+      <IconButton color="inherit" onClick={handleMenuOpen}>
+        <AccountCircleIcon />
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleMenuClose}>
+          <ListItemIcon>
+            <AccountCircleIcon />
+          </ListItemIcon>
+          <ListItemText primary="My Account" />
+        </MenuItem>
+        <MenuItem onClick={handleMenuClose}>
+          <ListItemIcon>
+            <ExitToAppIcon />
+          </ListItemIcon>
+          <ListItemText primary="Logout" />
+        </MenuItem>
+      </Menu>
+    </div>
   );
 };
 
-export default MainContent;
+export default ProfileMenu;
