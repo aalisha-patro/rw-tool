@@ -1,12 +1,64 @@
- <Grid container spacing={3}>
-        {data.map((item, index) => (
-          <Grid item xs={3} key={index}>
-            {item.type === "folder" ? (
-              <FolderIcon />
-            ) : (
-              <FileIcon />
-            )}
-            <span>{item.name}</span>
+import React, { useState } from "react";
+import { Container, Paper, Grid } from "@material-ui/core";
+import FolderIcon from "@material-ui/icons/Folder";
+
+const MainContent = () => {
+  const initialFolders = [
+    {
+      name: "Folder 1",
+      subfolders: [
+        {
+          name: "Subfolder 1.1",
+          subfolders: [],
+          files: []
+        },
+        // Other subfolders
+      ],
+      files: [
+        {
+          name: "File 1.1",
+          type: "pdf",
+          date: "2023-08-01"
+        },
+        // Other files
+      ]
+    },
+    {
+      name: "Folder 2",
+      subfolders: [],
+      files: []
+    },
+    // Other top-level folders
+  ];
+
+  const [currentFolders, setCurrentFolders] = useState(initialFolders);
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
+
+  const handleFolderClick = (clickedFolder) => {
+    setBreadcrumbs([...breadcrumbs, clickedFolder.name]);
+    setCurrentFolders(clickedFolder.subfolders);
+  };
+
+  return (
+    <Container>
+      <Paper elevation={3} style={{ padding: "20px", marginBottom: "20px" }}>
+        {breadcrumbs.map((folderName, index) => (
+          <span key={index}>
+            {folderName}
+            {index !== breadcrumbs.length - 1 && " > "}
+          </span>
+        ))}
+      </Paper>
+      <Grid container spacing={3}>
+        {currentFolders.map((folder, index) => (
+          <Grid item xs={3} key={index} onClick={() => handleFolderClick(folder)}>
+            <FolderIcon />
+            <span>{folder.name}</span>
           </Grid>
         ))}
       </Grid>
+    </Container>
+  );
+};
+
+export default MainContent;
