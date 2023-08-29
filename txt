@@ -1,16 +1,30 @@
 import React from "react";
-import { Breadcrumbs as MUIBreadcrumbs, Link, Typography } from "@material-ui/core";
+import { Container, Paper, TextField, Button, Grid } from "@material-ui/core";
+import FolderIcon from "@material-ui/icons/Folder";
+import FileIcon from "@material-ui/icons/InsertDriveFile";
 
-const Breadcrumbs = ({ breadcrumbs }) => {
+const MainContent = () => {
   return (
-    <MUIBreadcrumbs aria-label="breadcrumb">
-      {breadcrumbs.map((breadcrumb, index) => (
-        <Link color="inherit" href="#" key={index}>
-          {breadcrumb}
-        </Link>
-      ))}
-    </MUIBreadcrumbs>
+    <Container>
+      <Paper elevation={3} style={{ padding: "20px", marginBottom: "20px" }}>
+        {/* Breadcrumbs will go here */}
+      </Paper>
+      <Paper elevation={3} style={{ padding: "20px", marginBottom: "20px" }}>
+        {/* Search bar and filters will go here */}
+      </Paper>
+      <Grid container spacing={3}>
+        <Grid item xs={3}>
+          <FolderIcon />
+          <span>Folder Name</span>
+        </Grid>
+        <Grid item xs={3}>
+          <FileIcon />
+          <span>File Name</span>
+        </Grid>
+        {/* Other folder and file items */}
+      </Grid>
+    </Container>
   );
 };
 
-export default Breadcrumbs;
+export default MainContent;
