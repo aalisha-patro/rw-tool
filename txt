@@ -1,49 +1,57 @@
-import React, { useState } from "react";
-import { Container, Paper, Grid } from "@material-ui/core";
-import FolderIcon from "@material-ui/icons/Folder";
-import Breadcrumbs from "./Breadcrumbs";
+import React from "react";
+import { CssBaseline, makeStyles } from "@material-ui/core";
+import AppBarComponent from "./components/frontend/AppBar";
+import Sidebar from "./components/frontend/Sidebar";
+import MainContent from "./components/frontend/MainContent";
 
-const MainContent = ({ initialFolders }) => {
-  const [currentFolder, setCurrentFolder] = useState(null);
-  const [folderStack, setFolderStack] = useState([]);
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "grid",
+    gridTemplateColumns: "auto 1fr",
+  },
+}));
 
-  const handleFolderClick = (folder) => {
-    const updatedStack = [...folderStack, currentFolder];
-    setCurrentFolder(folder);
-    setFolderStack(updatedStack);
-  };
+function App() {
+  const classes = useStyles();
 
-  const handleBreadcrumbClick = (index) => {
-    const updatedStack = folderStack.slice(0, index);
-    setCurrentFolder(updatedStack.pop() || null);
-    setFolderStack(updatedStack);
-  };
-
-  const renderFolders = (folders) => {
-    return folders.map((folder, index) => (
-      <Grid item xs={3} key={index} onClick={() => handleFolderClick(folder)}>
-        <FolderIcon />
-        <span>{folder.name}</span>
-        {folder.folders.length > 0 && renderFolders(folder.folders)}
-      </Grid>
-    ));
+  const initialFolders = {
+    name: "Root",
+    folders: [
+      {
+        name: "Folder 1",
+        folders: [
+          {
+            name: "Subfolder 1",
+            folders: [],
+            files: [{ name: "File 1", type: "file" }],
+          },
+        ],
+        files: [],
+      },
+      {
+        name: "Folder 2",
+        folders: [],
+        files: [
+          { name: "File 2", type: "file" },
+          { name: "File 3", type: "file" },
+        ],
+      },
+    ],
+    files: [],
   };
 
   return (
-    <Container>
-      <Paper elevation={3} style={{ padding: "20px", marginBottom: "20px" }}>
-        <Breadcrumbs
-          breadcrumbs={folderStack.map((folder) => folder.name)}
-          onClick={handleBreadcrumbClick}
-        />
-      </Paper>
-      <Grid container spacing={3}>
-        {currentFolder
-          ? renderFolders(currentFolder.folders)
-          : renderFolders(initialFolders.folders)}
-      </Grid>
-    </Container>
+    <div>
+      <CssBaseline />
+      <AppBarComponent />
+      <div className={classes.root}>
+        <Sidebar />
+        <main>
+          <MainContent initialFolders={initialFolders} />
+        </main>
+      </div>
+    </div>
   );
-};
+}
 
-export default MainContent;
+export default App;
