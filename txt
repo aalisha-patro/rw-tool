@@ -1,48 +1,37 @@
-import React, { useState } from "react";
-import { Container, Paper, TextField, Grid, FormControl, Select, MenuItem } from "@material-ui/core";
-import FolderIcon from "@material-ui/icons/Folder";
-import Breadcrumbs from "./Breadcrumbs"; // Import your Breadcrumbs component
-
 const MainContent = ({ folders }) => {
   const [currentFolders, setCurrentFolders] = useState(folders);
   const [searchInput, setSearchInput] = useState("");
-  const [filterType, setFilterType] = useState("all");
+  const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
+  const [selectedFilter, setSelectedFilter] = useState(null); // To track the selected filter option
+  const [dateRangePickerOpen, setDateRangePickerOpen] = useState(false);
 
   const handleFolderClick = (clickedFolder) => {
     // ... your existing folder click logic ...
   };
 
   const handleSearch = (event) => {
-    const searchTerm = event.target.value.toLowerCase();
-    setSearchInput(searchTerm);
+    // ... your existing search logic ...
+  };
 
-    if (searchTerm === "") {
-      setCurrentFolders(folders);
+  const handleFilterIconClick = (event) => {
+    setFilterMenuAnchor(event.currentTarget);
+  };
+
+  const handleFilterOptionClick = (filterOption) => () => {
+    setSelectedFilter(filterOption);
+
+    if (filterOption === "date") {
+      setDateRangePickerOpen(true);
+      setFilterMenuAnchor(null);
     } else {
-      const filteredFolders = filterFolders(folders, searchTerm);
-      setCurrentFolders(filteredFolders);
+      // Handle other filter options
     }
   };
 
-  const handleFilter = (event) => {
-    setFilterType(event.target.value);
-    filterFoldersByType(event.target.value);
-  };
-
-  const filterFolders = (foldersArray, searchTerm) => {
-    return foldersArray.filter((folder) => {
-      const folderName = folder.name.toLowerCase();
-      return folderName.includes(searchTerm);
-    });
-  };
-
-  const filterFoldersByType = (type) => {
-    if (type === "all") {
-      setCurrentFolders(folders);
-    } else {
-      const filteredFolders = folders.filter((folder) => folder.type === type);
-      setCurrentFolders(filteredFolders);
-    }
+  const handleDateRangePickerClose = (selectedDateRange) => {
+    setDateRangePickerOpen(false);
+    setFilterMenuAnchor(null);
+    // Filter folders based on selectedDateRange
   };
 
   return (
@@ -58,17 +47,21 @@ const MainContent = ({ folders }) => {
           value={searchInput}
           onChange={handleSearch}
         />
-        <FormControl>
-          <Select
-            value={filterType}
-            onChange={handleFilter}
-            displayEmpty
-          >
-            <MenuItem value="all">All</MenuItem>
-            <MenuItem value="date">Date</MenuItem>
-            <MenuItem value="type">Type</MenuItem>
-          </Select>
-        </FormControl>
+        <IconButton onClick={handleFilterIconClick}>
+          <CalendarTodayIcon /> {/* Use the desired filter icon */}
+        </IconButton>
+        <Menu
+          anchorEl={filterMenuAnchor}
+          open={Boolean(filterMenuAnchor)}
+          onClose={() => setFilterMenuAnchor(null)}
+        >
+          <MenuItem onClick={handleFilterOptionClick("date")}>Date</MenuItem>
+          {/* Add other filter options here */}
+        </Menu>
+        <DateRangePicker
+          open={dateRangePickerOpen}
+          onClose={handleDateRangePickerClose}
+        />
       </Paper>
       <Grid container spacing={3}>
         {/* Render the filtered folders */}
@@ -82,5 +75,3 @@ const MainContent = ({ folders }) => {
     </Container>
   );
 };
-
-export default MainContent;
