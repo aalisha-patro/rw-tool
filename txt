@@ -1,12 +1,15 @@
-import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, IconButton } from "@material-ui/core";
+import React from "react";
+import { AppBar, Toolbar, Typography, IconButton, Badge, Menu, MenuItem } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import MenuIcon from "@material-ui/icons/Menu";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import ProfileMenu from "./ProfileMenu"; // Import the ProfileMenu component
+import MoreIcon from "@material-ui/icons/MoreVert";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
     width: "100%",
+    zIndex: theme.zIndex.drawer + 1,
   },
   grow: {
     flexGrow: 1,
@@ -15,24 +18,17 @@ const useStyles = makeStyles((theme) => ({
 
 const AppBarComponent = () => {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState(null); // State for profile menu
 
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  // Your profile menu related state and functions here
 
   return (
-    <AppBar position="static" className={classes.appBar}>
+    <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
         <IconButton
           edge="start"
           color="inherit"
           aria-label="open drawer"
-          onClick={handleMenuOpen}
+          onClick={handleDrawerToggle}
         >
           <MenuIcon />
         </IconButton>
@@ -40,21 +36,37 @@ const AppBarComponent = () => {
           Material-UI
         </Typography>
         <div className={classes.grow} />
-        <IconButton
-          aria-label="account of current user"
-          aria-controls="profile-menu"
-          aria-haspopup="true"
-          color="inherit"
-          onClick={handleProfileMenuOpen}
-        >
-          <AccountCircle />
-        </IconButton>
+        <div className={classes.sectionDesktop}>
+          <IconButton aria-label="show 17 new notifications" color="inherit">
+            <Badge badgeContent={17} color="secondary">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+          <IconButton
+            edge="end"
+            aria-label="account of current user"
+            aria-controls={menuId}
+            aria-haspopup="true"
+            onClick={handleProfileMenuOpen}
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
+        </div>
+        <div className={classes.sectionMobile}>
+          <IconButton
+            aria-label="show more"
+            aria-controls={mobileMenuId}
+            aria-haspopup="true"
+            onClick={handleMobileMenuOpen}
+            color="inherit"
+          >
+            <MoreIcon />
+          </IconButton>
+        </div>
       </Toolbar>
-      <ProfileMenu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-      />
+      {renderMobileMenu}
+      {renderMenu}
     </AppBar>
   );
 };
