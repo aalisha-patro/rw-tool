@@ -1,33 +1,65 @@
-const initialFolders = [
-  {
-    name: "Folder A",
-    subfolders: [
-      {
-        name: "Subfolder A1",
-        subfolders: [],
-      },
-      {
-        name: "Subfolder A2",
-        subfolders: [
-          {
-            name: "Sub-subfolder A2.1",
-            subfolders: [],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Folder B",
-    subfolders: [
-      {
-        name: "Subfolder B1",
-        subfolders: [],
-      },
-    ],
-  },
-  {
-    name: "Folder C",
-    subfolders: [],
-  },
-];
+import React, { useState } from "react";
+import { Container, Paper, Grid, Breadcrumbs, Typography, Link } from "@material-ui/core";
+import FolderIcon from "@material-ui/icons/Folder";
+import FileIcon from "@material-ui/icons/InsertDriveFile";
+
+const MainContent = () => {
+  const [currentFolder, setCurrentFolder] = useState(null);
+  const [folderStack, setFolderStack] = useState([]);
+
+  const handleFolderClick = (folder) => {
+    const updatedStack = [...folderStack, currentFolder];
+    setCurrentFolder(folder);
+    setFolderStack(updatedStack);
+  };
+
+  const handleBreadcrumbClick = (index) => {
+    const updatedStack = folderStack.slice(0, index);
+    setCurrentFolder(updatedStack.pop() || null);
+    setFolderStack(updatedStack);
+  };
+
+  const renderBreadcrumbs = () => {
+    return (
+      <Breadcrumbs>
+        <Link color="inherit" onClick={() => handleBreadcrumbClick(-1)}>
+          Home
+        </Link>
+        {folderStack.map((folder, index) => (
+          <Link
+            key={index}
+            color="inherit"
+            onClick={() => handleBreadcrumbClick(index)}
+          >
+            {folder.name}
+          </Link>
+        ))}
+        {currentFolder && <Typography color="textPrimary">{currentFolder.name}</Typography>}
+      </Breadcrumbs>
+    );
+  };
+
+  const renderFolders = (folders) => {
+    return folders.map((folder, index) => (
+      <Grid item xs={3} key={index} onClick={() => handleFolderClick(folder)}>
+        <FolderIcon />
+        <span>{folder.name}</span>
+      </Grid>
+    ));
+  };
+
+  return (
+    <Container>
+      <Paper elevation={3} style={{ padding: "20px", marginBottom: "20px" }}>
+        {renderBreadcrumbs()}
+      </Paper>
+      <Grid container spacing={3}>
+        {currentFolder
+          ? renderFolders(currentFolder.subfolders)
+          : renderFolders(initialFolders)}
+      </Grid>
+    </Container>
+  );
+};
+
+export default MainContent;
