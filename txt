@@ -1,51 +1,35 @@
 import React from "react";
-import {
-  Menu,
-  MenuItem,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-} from "@material-ui/core";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { CssBaseline, Grid } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import AppBarComponent from "./AppBar";
+import Sidebar from "./Sidebar";
+import Breadcrumbs from "./Breadcrumbs";
+import MainContent from "./MainContent";
+import ProfileMenu from "./ProfileMenu";
 
-const ProfileMenu = () => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+  },
+}));
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+function App() {
+  const classes = useStyles();
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  const breadcrumbs = ["Home", "Folder Name"];
 
   return (
-    <div>
-      <IconButton color="inherit" onClick={handleMenuOpen}>
-        <AccountCircleIcon />
-      </IconButton>
-      <Menu
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-      >
-        <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon>
-            <AccountCircleIcon />
-          </ListItemIcon>
-          <ListItemText primary="My Account" />
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon>
-            <ExitToAppIcon />
-          </ListItemIcon>
-          <ListItemText primary="Logout" />
-        </MenuItem>
-      </Menu>
+    <div className={classes.root}>
+      <CssBaseline />
+      <AppBarComponent />
+      <Sidebar />
+      <main>
+        <Breadcrumbs breadcrumbs={breadcrumbs} />
+        <MainContent />
+      </main>
+      <ProfileMenu />
     </div>
   );
-};
+}
 
-export default ProfileMenu;
+export default App;
