@@ -1,36 +1,33 @@
-import React, { useState } from "react";
-import { Container, Paper, Grid } from "@material-ui/core";
-import FolderIcon from "@material-ui/icons/Folder";
-
-const MainContent = ({ folders }) => {
-  const [currentFolders, setCurrentFolders] = useState(folders);
-  const [breadcrumbs, setBreadcrumbs] = useState([]);
-
-  const handleFolderClick = (clickedFolder) => {
-    setBreadcrumbs([...breadcrumbs, clickedFolder.name]);
-    setCurrentFolders(clickedFolder.subfolders);
-  };
-
-  return (
-    <Container>
-      <Paper elevation={3} style={{ padding: "20px", marginBottom: "20px" }}>
-        {breadcrumbs.map((folderName, index) => (
-          <span key={index}>
-            {folderName}
-            {index !== breadcrumbs.length - 1 && " > "}
-          </span>
-        ))}
-      </Paper>
-      <Grid container spacing={3}>
-        {currentFolders.map((folder, index) => (
-          <Grid item xs={3} key={index} onClick={() => handleFolderClick(folder)}>
-            <FolderIcon />
-            <span>{folder.name}</span>
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
-  );
-};
-
-export default MainContent;
+const initialFolders = [
+  {
+    name: "Folder A",
+    subfolders: [
+      {
+        name: "Subfolder A1",
+        subfolders: [],
+      },
+      {
+        name: "Subfolder A2",
+        subfolders: [
+          {
+            name: "Sub-subfolder A2.1",
+            subfolders: [],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Folder B",
+    subfolders: [
+      {
+        name: "Subfolder B1",
+        subfolders: [],
+      },
+    ],
+  },
+  {
+    name: "Folder C",
+    subfolders: [],
+  },
+];
