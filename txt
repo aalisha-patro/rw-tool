@@ -1,57 +1,20 @@
 import React from "react";
-import { CssBaseline, makeStyles } from "@material-ui/core";
-import AppBarComponent from "./components/frontend/AppBar";
-import Sidebar from "./components/frontend/Sidebar";
-import MainContent from "./components/frontend/MainContent";
+import { Breadcrumbs as MUIBreadcrumbs, Link, Typography } from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "grid",
-    gridTemplateColumns: "auto 1fr",
-  },
-}));
-
-function App() {
-  const classes = useStyles();
-
-  const initialFolders = {
-    name: "Root",
-    folders: [
-      {
-        name: "Folder 1",
-        folders: [
-          {
-            name: "Subfolder 1",
-            folders: [],
-            files: [{ name: "File 1", type: "file" }],
-          },
-        ],
-        files: [],
-      },
-      {
-        name: "Folder 2",
-        folders: [],
-        files: [
-          { name: "File 2", type: "file" },
-          { name: "File 3", type: "file" },
-        ],
-      },
-    ],
-    files: [],
-  };
-
+const Breadcrumbs = ({ breadcrumbs, onClick }) => {
   return (
-    <div>
-      <CssBaseline />
-      <AppBarComponent />
-      <div className={classes.root}>
-        <Sidebar />
-        <main>
-          <MainContent initialFolders={initialFolders} />
-        </main>
-      </div>
-    </div>
+    <MUIBreadcrumbs aria-label="breadcrumb">
+      <Link color="inherit" onClick={() => onClick(-1)}>
+        Home
+      </Link>
+      {breadcrumbs.map((breadcrumb, index) => (
+        <Link color="inherit" onClick={() => onClick(index)} key={index}>
+          {breadcrumb}
+        </Link>
+      ))}
+      <Typography color="textPrimary">{breadcrumbs[breadcrumbs.length - 1]}</Typography>
+    </MUIBreadcrumbs>
   );
-}
+};
 
-export default App;
+export default Breadcrumbs;
