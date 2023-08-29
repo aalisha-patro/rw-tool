@@ -1,62 +1,72 @@
 import React, { useState } from "react";
-import { Container, Paper, Grid, Breadcrumbs, Typography, Link } from "@material-ui/core";
+import { Container, Paper, Grid } from "@material-ui/core";
 import FolderIcon from "@material-ui/icons/Folder";
 import FileIcon from "@material-ui/icons/InsertDriveFile";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import Typography from "@material-ui/core/Typography";
+import Link from "@material-ui/core/Link";
 
 const MainContent = () => {
-  const [currentFolder, setCurrentFolder] = useState(null);
-  const [folderStack, setFolderStack] = useState([]);
+  const initialFolder = {
+    name: "Root",
+    folders: [
+      {
+        name: "Folder 1",
+        folders: [
+          {
+            name: "Subfolder 1",
+            folders: [],
+            files: [{ name: "File 1", type: "file" }],
+          },
+        ],
+        files: [],
+      },
+      {
+        name: "Folder 2",
+        folders: [],
+        files: [
+          { name: "File 2", type: "file" },
+          { name: "File 3", type: "file" },
+        ],
+      },
+    ],
+    files: [],
+  };
+
+  const [currentFolder, setCurrentFolder] = useState(initialFolder);
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
 
   const handleFolderClick = (folder) => {
-    const updatedStack = [...folderStack, currentFolder];
+    const updatedBreadcrumbs = [...breadcrumbs, folder];
     setCurrentFolder(folder);
-    setFolderStack(updatedStack);
-  };
-
-  const handleBreadcrumbClick = (index) => {
-    const updatedStack = folderStack.slice(0, index);
-    setCurrentFolder(updatedStack.pop() || null);
-    setFolderStack(updatedStack);
-  };
-
-  const renderBreadcrumbs = () => {
-    return (
-      <Breadcrumbs>
-        <Link color="inherit" onClick={() => handleBreadcrumbClick(-1)}>
-          Home
-        </Link>
-        {folderStack.map((folder, index) => (
-          <Link
-            key={index}
-            color="inherit"
-            onClick={() => handleBreadcrumbClick(index)}
-          >
-            {folder.name}
-          </Link>
-        ))}
-        {currentFolder && <Typography color="textPrimary">{currentFolder.name}</Typography>}
-      </Breadcrumbs>
-    );
-  };
-
-  const renderFolders = (folders) => {
-    return folders.map((folder, index) => (
-      <Grid item xs={3} key={index} onClick={() => handleFolderClick(folder)}>
-        <FolderIcon />
-        <span>{folder.name}</span>
-      </Grid>
-    ));
+    setBreadcrumbs(updatedBreadcrumbs);
   };
 
   return (
     <Container>
       <Paper elevation={3} style={{ padding: "20px", marginBottom: "20px" }}>
-        {renderBreadcrumbs()}
+        <Breadcrumbs aria-label="breadcrumb">
+          {breadcrumbs.map((breadcrumb, index) => (
+            <Link
+              key={index}
+              color="inherit"
+              onClick={() => handleFolderClick(breadcrumb)}
+            >
+              {breadcrumb.name}
+            </Link>
+          ))}
+          <Typography color="textPrimary">{currentFolder.name}</Typography>
+        </Breadcrumbs>
       </Paper>
       <Grid container spacing={3}>
-        {currentFolder
-          ? renderFolders(currentFolder.subfolders)
-          : renderFolders(initialFolders)}
+        {currentFolder.folders.map((folder, index) => (
+          <Grid item xs={3} key={index}>
+            <FolderIcon />
+            <span onClick={() => handleFolderClick(folder)}>
+              {folder.name}
+            </span>
+          </Grid>
+        ))}
       </Grid>
     </Container>
   );
