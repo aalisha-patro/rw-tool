@@ -1,13 +1,10 @@
-import React, { useState } from "react";
-import { Container, Paper, Grid } from "@material-ui/core";
+import React,{useState} from "react";
+import { Container, Paper, TextField, Button, Grid } from "@material-ui/core";
 import FolderIcon from "@material-ui/icons/Folder";
 import FileIcon from "@material-ui/icons/InsertDriveFile";
-import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
-
+import { Breadcrumbs,Typography,Link } from "@material-ui/core";
 const MainContent = () => {
-  const initialFolder = {
+  const initialFolders = {
     name: "Root",
     folders: [
       {
@@ -32,44 +29,161 @@ const MainContent = () => {
     ],
     files: [],
   };
-
-  const [currentFolder, setCurrentFolder] = useState(initialFolder);
+  const [currentFolder, setCurrentFolder] = useState(null);
   const [breadcrumbs, setBreadcrumbs] = useState([]);
+  const [folderStack, setFolderStack] = useState([]);
+
 
   const handleFolderClick = (folder) => {
-    const updatedBreadcrumbs = [...breadcrumbs, folder];
+    const updatedStack = [...folderStack, currentFolder];
     setCurrentFolder(folder);
-    setBreadcrumbs(updatedBreadcrumbs);
+    setFolderStack(updatedStack);
+  };
+  const handleBreadcrumbClick = (index) => {
+    const updatedStack = folderStack.slice(0, index);
+    setCurrentFolder(updatedStack.pop() || null);
+    setFolderStack(updatedStack);
+  };
+  const renderBreadcrumbs = () => {
+    return (
+      <Breadcrumbs>
+        <Link color="inherit" onClick={() => handleBreadcrumbClick(-1)}>
+          Home
+        </Link>
+        {folderStack.map((folder, index) => (
+          <Link
+            key={index}
+            color="inherit"
+            onClick={() => handleBreadcrumbClick(index)}
+          >
+            {folder.name}
+          </Link>
+        ))}
+        {currentFolder && <Typography color="textPrimary">{currentFolder.name}</Typography>}
+      </Breadcrumbs>
+    );
   };
 
+  const renderFolders = (folders) => {
+    return folders.map((folder, index) => (
+      <Grid item xs={3} key={index} onClick={() => handleFolderClick(folder)}>
+        <FolderIcon />
+        <span>{folder.name}</span>
+        {folder.folders.length>0 && renderFolders(folder.folders)}
+      </Grid>
+    ));
+  };
   return (
     <Container>
       <Paper elevation={3} style={{ padding: "20px", marginBottom: "20px" }}>
-        <Breadcrumbs aria-label="breadcrumb">
-          {breadcrumbs.map((breadcrumb, index) => (
-            <Link
-              key={index}
-              color="inherit"
-              onClick={() => handleFolderClick(breadcrumb)}
-            >
-              {breadcrumb.name}
-            </Link>
-          ))}
-          <Typography color="textPrimary">{currentFolder.name}</Typography>
-        </Breadcrumbs>
+      {renderBreadcrumbs()}
       </Paper>
-      <Grid container spacing={3}>
-        {currentFolder.folders.map((folder, index) => (
-          <Grid item xs={3} key={index}>
-            <FolderIcon />
-            <span onClick={() => handleFolderClick(folder)}>
-              {folder.name}
-            </span>
-          </Grid>
+      {/* <Paper elevation={3} style={{ padding: "20px", marginBottom: "20px" }}> */}
+        {/* Search bar and filters will go here */}
+      {/* </Paper> */}
+      {/* <Grid container spacing={3}>
+        {currentFolder.map((folder, index) => (
+          <Grid item xs={3} key={index} onClick={() => handleFolderClick(folder)}>
+          <FolderIcon />
+          <span>{folder.name}</span>
+        </Grid>
         ))}
+      </Grid> */}
+      <Grid container spacing={3}>
+        {currentFolder
+          ? renderFolders(currentFolder.subfolders)
+          : renderFolders(initialFolders)}
       </Grid>
     </Container>
   );
 };
 
 export default MainContent;
+
+import React from "react";
+import { CssBaseline, Grid } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import AppBarComponent from "./components/frontend/AppBar";
+import Sidebar from "./components/frontend/Sidebar";
+import Breadcrumbs from "./components/frontend/Breadcrumbs";
+import MainContent from "./components/frontend/MainContent";
+import ProfileMenu from "./components/frontend/ProfileMenu";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "grid",
+    gridTemplateColumns: "auto 1fr",
+  },
+}));
+
+
+function App() {
+  const classes = useStyles();
+
+  const initialFolders = [
+    {
+      name: "Folder A",
+      subfolders: [
+        {
+          name: "Subfolder A1",
+          subfolders: [],
+        },
+        {
+          name: "Subfolder A2",
+          subfolders: [
+            {
+              name: "Sub-subfolder A2.1",
+              subfolders: [],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: "Folder B",
+      subfolders: [
+        {
+          name: "Subfolder B1",
+          subfolders: [],
+        },
+      ],
+    },
+    {
+      name: "Folder C",
+      subfolders: [],
+    },
+  ];
+
+  return (
+    <div>
+       <CssBaseline />
+      <AppBarComponent />
+    <div className={classes.root}>
+     
+      <Sidebar />
+      <main>
+        <MainContent folders={initialFolders}/>
+      </main>
+    </div>
+    </div>
+  );
+}
+
+export default App;
+
+import React from "react";
+import { Breadcrumbs as MUIBreadcrumbs, Link, Typography } from "@material-ui/core";
+
+const Breadcrumbs = ({ breadcrumbs }) => {
+  return (
+    <MUIBreadcrumbs aria-label="breadcrumb">
+      {breadcrumbs.map((breadcrumb, index) => (
+        <Link color="inherit" href="#" key={index}>
+          {breadcrumb}
+        </Link>
+      ))}
+    </MUIBreadcrumbs>
+  );
+};
+
+export default Breadcrumbs;
