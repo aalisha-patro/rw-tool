@@ -1,11 +1,14 @@
-<div>
-  {clickedFileBreadcrumbs && (
-    <Breadcrumbs aria-label="breadcrumb">
-      {Object.entries(clickedFileBreadcrumbs).map(([fileId, breadcrumb], index) => (
-        <Typography key={index} color="textPrimary">
-          {breadcrumb}
-        </Typography>
-      ))}
-    </Breadcrumbs>
-  )}
-</div>
+ <div>
+      <div className="breadcrumbs">
+        {clickedFileBreadcrumbs.map((folderName, index) => (
+          <span key={index}>{folderName} / </span>
+        ))}
+      </div>
+      <ul className="file-list">
+        {filesData.map((file) => (
+          <li key={file.id} onClick={() => handleFileClick(file)}>
+            {file.name}
+          </li>
+        ))}
+      </ul>
+    </div>
