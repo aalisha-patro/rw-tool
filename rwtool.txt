@@ -1,27 +1,134 @@
-const suggestions = [
-    ...new Set(files.map((file) => file.name.toLowerCase())), // Unique file names
-    ...new Set(foldersData.map((folder) => folder.name.toLowerCase())), // Unique folder names
-  ];
+import React,{useState} from "react";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Grid from "@mui/material/Grid";
+// import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import RightSection from "./FolderManagement/RightSection";
+export default function FolderMgmt() {
+  const cards = [1, 2, 3, 4, 5, 6];
+  const [favoriteFiles, setFavoriteFiles] = useState([]);
 
-<Autocomplete
-        freeSolo
-        options={suggestions}
-        onInputChange={handleSearchTermChange}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            placeholder="Search files and folders..."
-            variant="outlined"
-            fullWidth
-            size="small"
-            InputProps={{
-              ...params.InputProps,
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
+  const [downloadFiles, setDownloadFiles] = useState([]);
+
+  const [recentFiles, setRecentFiles] = useState([]);
+
+  const handleToggleFavorite = (file) => {
+
+    if (file.isFavorite) {
+
+      file.isFavorite = false;
+
+
+
+
+      setFavoriteFiles((favoriteFiles) =>
+
+        favoriteFiles.filter((fav) => fav.id !== file.id)
+
+      );
+
+    } else {
+
+      file.isFavorite = true;
+
+
+
+
+      setFavoriteFiles((favoriteFiles) => [...favoriteFiles, file]);
+
+    }
+
+
+
+
+    setFiles((prevFiles) =>
+
+      prevFiles.map((f) =>
+
+        f.id === file.id ? { ...f, isFavorite: !f.isFavorite } : f
+
+      )
+
+    );
+
+  };
+
+  const handlePageChange = (event, page) => {
+
+    setCurrentPage(page);
+
+  };
+
+
+
+
+  const handleDownloadFile = (file) => {
+
+    setDownloadFiles((prevDownloaded) => [...prevDownloaded, file]);
+
+  };
+  
+
+  return (
+    <div>
+      <Container style={{ margin: "25px auto" }}>
+        <Grid container spacing={4} item xs={9}>
+          {cards.map((card) => (
+            <Grid item key={card} xs={12} sm={6} md={4}>
+              <Card
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  maxWidth: 345,
+                  boxShadow: 5,
+                }}
+              >
+                <CardMedia
+                  component="div"
+                  sx={{
+                    // 16:9
+                    pt: "56.25%",
+                  }}
+                  image="https://source.unsplash.com/random?wallpapers"
+                />
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography style={{ textAlign: "center" }}>
+                    Accounts_Statement_{card}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    style={{ textAlign: "center", margin: "auto" }}
+                    size="small"
+                  >
+                    Open
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      <Grid item xs={3} style={{ paddingTop: "0px" }}>
+
+          <RightSection
+
+            favoriteFiles={favoriteFiles}
+
+            downloadedFiles={downloadFiles}
+
+            recentFiles={recentFiles}
+
           />
-        )}
-      />
+
+        </Grid>
+              </Container>
+
+    </div>
+  );
+}
