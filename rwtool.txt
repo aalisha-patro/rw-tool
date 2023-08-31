@@ -1,32 +1,53 @@
-const findParentFolders = (folderId, acc = []) => {
-  const folder = folderData.find((folder) => folder.id === folderId);
-  if (folder) {
-    acc.unshift(folder.name);
-    if (folder.parentId) {
-      findParentFolders(folder.parentId, acc);
-    }
-  }
-  return acc;
-};
+import Autocomplete from '@mui/material/Autocomplete';
+function MiddleSection({
+  files,
+  onToggleFavorite,
+  onDownloadFiles,
+  onFileClick,
+  clickedFileBreadcrumbs,
+}) {
+  const [searchTerm, setSearchTerm] = useState('');
 
-const handleFileClick = (file) => {
-  const MAX_RECENT_FILES = 5;
+  const allItems = [
+    ...folderData,
+    ...filesData,
+  ];
 
-  const folder = folderData.find((folder) => folder.id === file.folderIds[0]);
-  const parentFolders = findParentFolders(folder.id, []);
-  const path = [...parentFolders, folder.name, file.name].join("/");
+  const filteredItems = allItems.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const updatedClickedFileBreadcrumbs = {
-    [file.id]: path,
-  };
+  return (
+    <div className="middle-section">
+      <Autocomplete
+        options={filteredItems}
+        getOptionLabel={(item) => item.name}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder="Search files and folders..."
+            variant="outlined"
+            fullWidth
+            size="small"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              ...params.InputProps,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        )}
+      />
+      <div>
+        {/* Display breadcrumbs */}
+      </div>
+      {/* Rest of your MiddleSection content */}
+    </div>
+  );
+}
 
-  setClickedFileBreadcrumbs(updatedClickedFileBreadcrumbs);
-
-  // Rest of your code
-};
-In this code, the findParentFolders function recursively traverses through the parent folders of a given folder until it reaches the root folder. It builds an array of folder names and then joins them with "/" to create the breadcrumb path. This way, the breadcrumb path will include the names of all parent folders leading to the clicked file.
-
-
-
-
-
+export default MiddleSection;
