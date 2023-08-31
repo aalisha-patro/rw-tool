@@ -1,21 +1,63 @@
-import React,{useState} from "react";
+import React from "react";
+
 import Card from "@mui/material/Card";
+
 import CardActions from "@mui/material/CardActions";
+
 import CardContent from "@mui/material/CardContent";
+
 import CardMedia from "@mui/material/CardMedia";
+
 import Grid from "@mui/material/Grid";
+
 // import Box from "@mui/material/Box";
+
 import Button from "@mui/material/Button";
+
 import Typography from "@mui/material/Typography";
+
 import Container from "@mui/material/Container";
-import RightSection from "./FolderManagement/RightSection";
+
+import { Link } from "react-router-dom";
+
+import RightSection from "./RightSection";
+
+import { useState } from "react";
+
+import folderData from "./folders.json";
+
+import filesData from "./files.json";
+
+
+
+
 export default function FolderMgmt() {
+
   const cards = [1, 2, 3, 4, 5, 6];
+
+  const [folders, setFolders] = useState([]);
+
+
+
+
+  const [files, setFiles] = useState([]);
+
+
+
+
+  const [selectedFolder, setSelectedFolder] = useState(null);
+
+
+
+
   const [favoriteFiles, setFavoriteFiles] = useState([]);
 
   const [downloadFiles, setDownloadFiles] = useState([]);
 
   const [recentFiles, setRecentFiles] = useState([]);
+
+
+
 
   const handleToggleFavorite = (file) => {
 
@@ -72,63 +114,197 @@ export default function FolderMgmt() {
     setDownloadFiles((prevDownloaded) => [...prevDownloaded, file]);
 
   };
-  
+
+  const handleFileClick = (file) => {
+
+    const MAX_RECENT_FILES = 5;
+
+
+
+
+    if (!recentFiles.some((recentFiles) => recentFiles.id === file.id)) {
+
+      const updatedRecentFiles = [
+
+        file,
+
+        ...recentFiles.slice(0, MAX_RECENT_FILES - 1),
+
+      ];
+
+      setRecentFiles(updatedRecentFiles);
+
+    }
+
+  };
+
+
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const foldersPerPage = 5;
+
+  const totalPages = Math.ceil(folderData.length / foldersPerPage);
+
+  const filteredFiles = selectedFolder
+
+    ? filesData.filter((file) => file.folderIds.includes(selectedFolder))
+
+    : filesData;
+
+
+
+
+  const [clickedFolderId, setClickedFolderId] = useState(1);
+
+
+
+
+  const handleFolderClick = (folderId) => {
+
+    setSelectedFolder(folderId);
+
+    setClickedFolderId(folderId);
+
+  };
 
   return (
+
     <div>
-      <Container style={{ margin: "25px auto" }}>
+
+      <Container style={{ margin: "25px auto", display: "flex", justifyContent: "space-between" }}>
+
         <Grid container spacing={4} item xs={9}>
+
           {cards.map((card) => (
-            <Grid item key={card} xs={12} sm={6} md={4}>
+
+            <Grid item key={card} xs={6} sm={2} md={4}>
+
               <Card
+
                 sx={{
+
                   height: "100%",
+
                   display: "flex",
+
                   flexDirection: "column",
+
                   maxWidth: 345,
+
                   boxShadow: 5,
+
                 }}
+
               >
+
                 <CardMedia
+
                   component="div"
+
                   sx={{
+
                     // 16:9
+
                     pt: "56.25%",
+
                   }}
+
                   image="https://source.unsplash.com/random?wallpapers"
+
                 />
+
                 <CardContent sx={{ flexGrow: 1 }}>
+
                   <Typography style={{ textAlign: "center" }}>
+
                     Accounts_Statement_{card}
+
                   </Typography>
+
                 </CardContent>
+
                 <CardActions>
-                  <Button
-                    style={{ textAlign: "center", margin: "auto" }}
-                    size="small"
+
+                  <Link
+
+                    style={{
+
+                      textDecoration: "none",
+
+                      textAlign: "center",
+
+                      margin: "auto",
+
+                    }}
+
+                    to="/userlist"
+
                   >
-                    Open
-                  </Button>
+
+                    <Button
+
+                      // style={{ textAlign: "center", margin: "auto" }}
+
+                      size="small"
+
+                    >
+
+                      Open
+
+                    </Button>
+
+                  </Link>
+
                 </CardActions>
+
               </Card>
+
             </Grid>
+
           ))}
-        </Grid>
-      <Grid item xs={3} style={{ paddingTop: "0px" }}>
 
-          <RightSection
+          </Grid>
 
-            favoriteFiles={favoriteFiles}
+          {/* <Grid xs={3} sm={3} md={4}>
 
-            downloadedFiles={downloadFiles}
+            <RightSection
 
-            recentFiles={recentFiles}
+              favoriteFiles={favoriteFiles}
 
-          />
+              downloadedFiles={downloadFiles}
 
-        </Grid>
-              </Container>
+              recentFiles={recentFiles}
+
+            />
+
+          </Grid> */}
+
+          <Grid item xs={3} style={{ paddingTop: "0px" }}>
+
+            <RightSection
+
+              favoriteFiles={favoriteFiles}
+
+              downloadedFiles={downloadFiles}
+
+              recentFiles={recentFiles}
+
+            />
+
+          </Grid>
+
+       
+
+      </Container>
 
     </div>
+
   );
+
 }
+
+
+
+
