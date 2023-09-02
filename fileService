@@ -1,0 +1,21 @@
+package com.scb.axessspringboottraining.service;
+
+import java.util.Date;
+import java.util.List;
+
+import com.scb.axessspringboottraining.entity.File;
+import com.scb.axessspringboottraining.entity.FolderPath;
+
+public interface FileService {
+//	addFile, updateFile, getallFiles, getFilebyId
+	public File addFile(File file);
+	public List<File> getAllFiles();
+	public File getFileById(Long id);
+//	public List<File> getFileByUploadDate(Date dt);
+//	public List<File> filterFilesByUploadDate(Date start, Date end);
+	public boolean deleteById(Long id);
+	public File updateFile(File file, Long id);
+	public List<File> getAllByFolderPath(FolderPath folderPath);
+	
+	public List<File> filterByDate(FolderPath folderPath, Date start, Date end);
+}
