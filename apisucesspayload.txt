@@ -1,0 +1,476 @@
+import React, { useState } from "react";
+import File from "./File";
+import TextField from "@mui/material/TextField";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import IconButton from "@mui/material/IconButton";
+import Grid from "@mui/material/Grid";
+import DownloadIcon from "@mui/icons-material/CloudDownload";
+import {
+  ButtonGroup,
+  InputAdornment,
+  Pagination,
+  PaginationItem,
+  TablePagination,
+  Tooltip,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Breadcrumbs,
+  Typography,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import filesData from "./files.json";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import Select from "@mui/material/Select";
+import { DateRangePicker } from "@mui/lab";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import DownloadForOfflineIcon from "@mui/icons-material/DownloadForOffline";
+import Autocomplete from "@mui/material/Autocomplete"
+import foldersData from "./folders.json";
+import jszip from "jszip";
+import FileSaver from "file-saver";
+
+function MiddleSection({
+  files,
+  onToggleFavorite,
+  onDownloadFiles,
+  onFileClick,
+  clickedFileBreadcrumbs,
+
+}) {
+  const itemsPerPage = 5;
+  const [page, setPage] = useState(1);
+
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedFileType, setSelectedFileType] = useState("ALL");
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
+  const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleFileTypeChange = (event) => {
+    setSelectedFileType(event.target.value);
+  };
+
+  const handleDateRangeChange = (newValue) => {
+    setSelectedDateRange(newValue);
+  };
+  // const handleSearchTermChange = (event) => {
+  //   setSearchTerm(event.target.value);
+  // };
+  const handleSearchTermChange = (event,value) => {
+    setSearchTerm(value|| '');
+  };
+
+  const filteredFiles = files
+    .filter((file) => {
+      if (searchTerm === "") {
+        return true;
+      }
+
+      return file.name.toLowerCase().includes(searchTerm.toLowerCase());
+    })
+    .filter((file) => {
+      if (selectedFileType === "ALL") {
+        return true; // No filter applied
+      }
+      return file.type === selectedFileType;
+    })
+    .filter((file) => {
+      const uploadDate = new Date(file.uploadDate);
+      const startDate = selectedDateRange[0];
+      const endDate = selectedDateRange[1];
+
+      if (!startDate || !endDate) {
+        return true; // No filter applied
+      }
+
+      return uploadDate >= startDate && uploadDate <= endDate;
+    });
+
+  const pageCount = Math.ceil(filteredFiles.length / itemsPerPage);
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const visibleFiles = filteredFiles.slice(startIndex, endIndex);
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleFileClick = (file)=>{
+    const folderPath = file.path.substring(0,file.path.lastIndexOf("/"));
+
+    const folderNames = folderPath.split("/");
+    const breadcrumbs = {};
+    folderNames.forEach((folderName, index)=>{
+      breadcrumbs[index+1] = folderName;
+    });
+
+    breadcrumbs[file.id]= file.name;
+    setClickedFileBreadCrumbs(breadcrumbs);
+  }
+  const suggestions = [
+    ...new Set(files.map((file) => file.name.toLowerCase())), // Unique file names
+    ...new Set(foldersData.map((folder) => folder.name.toLowerCase())), // Unique folder names
+  ];
+
+  const handleFileSelection=(file)=>{
+    const isSelected = selectedFiles.includes(file);
+    if (isSelected){
+      setSelectedFiles(selectedFiles.filter((selectedFile)=>selectedFile !==file));
+    }
+    else{
+      setSelectedFiles([...selectedFiles,file]);
+    }
+  };
+  const handleDownloadSelectedFiles = () => {
+    if (selectedFiles.length === 0) {
+      // No files are selected, so do nothing
+      return;
+    }
+
+    // Create a new ZIP instance
+    const zip = new jszip();
+
+    // Add each selected file to the ZIP folder
+    selectedFiles.forEach((file) => {
+      // Assuming file.content is the file content or data
+      zip.file(file.name, file.content);
+    });
+
+    // Generate the ZIP folder
+    zip.generateAsync({ type: "blob" }).then((blob) => {
+      // Save the ZIP folder as a file and trigger a download
+      FileSaver.saveAs(blob, "selected_files.zip");
+    });
+  };
+
+
+  return (
+    <div className="middle-section">
+      <div>
+      {clickedFileBreadcrumbs && (
+        <Breadcrumbs aria-label="breadcrumb" >
+          {Object.entries(clickedFileBreadcrumbs).map(([fileId, breadcrumb], index) => (
+            <Typography key={index} color="textPrimary">
+              {breadcrumb}
+            </Typography>
+          ))}
+        </Breadcrumbs>
+      )}
+    </div>
+      {/* <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12}> */}
+      <Autocomplete
+        freeSolo
+        options={suggestions}
+        value={searchTerm}
+        onInputChange={handleSearchTermChange}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder="Search files and folders..."
+            variant="outlined"
+            fullWidth
+            size="small"
+            InputProps={{
+              ...params.InputProps,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        )}
+      />
+      {/* </Grid>
+      </Grid> */}
+        
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "end",
+          marginTop: "8px",
+          marginBottom: "8px",
+        }}
+      >
+        <Button size="small" onClick={handleClickOpen}>
+          Filter By Date
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Filter by date"}
+            </DialogTitle>
+            <DialogContent>
+              <form style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label htmlFor="startDate">Start Date</label>
+                  <input
+                    style={{ padding: "3px", marginLeft: "1px" }}
+                    type="date"
+                    name="startDate"
+                    id="startDate"
+                  />
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label style={{ marginLeft: "20px" }} htmlFor="startDate">
+                    End Date
+                  </label>
+                  <input
+                    style={{ padding: "3px", marginLeft: "1px" }}
+                    type="date"
+                    name="endDate"
+                    id="endDate"
+                  />
+                </div>
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleClose} autoFocus>
+                Submit
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Button>
+
+        <div>
+          <Select
+            value={selectedFileType}
+            onChange={handleFileTypeChange}
+            style={{ height: "30px" }}
+          >
+            <MenuItem value="ALL">All</MenuItem>
+            <MenuItem value="PDF">PDF</MenuItem>
+            <MenuItem value="Word">Word</MenuItem>
+          </Select>
+
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Filter by date"}
+            </DialogTitle>
+            <DialogContent>
+              <form style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label htmlFor="startDate">Start Date</label>
+                  <input
+                    style={{ padding: "3px", marginLeft: "1px" }}
+                    type="date"
+                    name="startDate"
+                    id="startDate"
+                  />
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label style={{ marginLeft: "20px" }} htmlFor="startDate">
+                    End Date
+                  </label>
+                  <input
+                    style={{ padding: "3px", marginLeft: "1px" }}
+                    type="date"
+                    name="endDate"
+                    id="endDate"
+                  />
+                </div>
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleClose} autoFocus>
+                Submit
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+        <Tooltip title="Download all files">
+          <IconButton onClick={handleDownloadSelectedFiles}>
+            <DownloadForOfflineIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
+      <TableContainer component={Paper}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Date Uploaded</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Favorite</TableCell>
+              <TableCell>Download</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {visibleFiles.map((file) => (
+              <TableRow key={file.id}>
+                <TableCell>
+                  <span
+                    className="clickable-file"
+                    onClick={() => onFileClick(file)}
+                  >
+                    {file.name}
+                  </span>
+                </TableCell>
+                <TableCell>{file.dateUploaded}</TableCell>
+                <TableCell>{file.type}</TableCell>
+                <TableCell>
+                  <Tooltip title="Add to Favorite">
+                    <IconButton onClick={() => onToggleFavorite(file)}>
+                      {file.isFavorite ? (
+                        <FavoriteIcon style={{ color: "green" }} />
+                      ) : (
+                        <FavoriteIcon />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
+                <TableCell>
+                  <Tooltip title="Download File">
+                    <IconButton onClick={() => onDownloadFiles(file)}>
+                      <DownloadIcon />
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Pagination
+        style={{ display: "flex", justifyContent: "center" }}
+        count={pageCount}
+        page={page}
+        onChange={handleChangePage}
+        renderItem={(item) => <PaginationItem component={Button} {...item} />}
+      />
+    </div>
+  );
+}
+
+export default MiddleSection;
+
+// import React, { useState } from 'react';
+// import File from './File';
+// import TextField from '@mui/material/TextField';
+// import Table from '@mui/material/Table';
+// import TableBody from '@mui/material/TableBody';
+// import TableCell from '@mui/material/TableCell';
+// import TableContainer from '@mui/material/TableContainer';
+// import TableHead from '@mui/material/TableHead';
+// import TableRow from '@mui/material/TableRow';
+// import Paper from '@mui/material/Paper';
+// import FavoriteIcon from '@mui/icons-material/Favorite';
+// import IconButton from '@mui/material/IconButton';
+// import Grid from '@mui/material/Grid';
+// import DownloadIcon from '@mui/icons-material/CloudDownload';
+// import { InputAdornment } from '@mui/material';
+// import SearchIcon from '@mui/icons-material/Search';
+// import filesData from './files.json'
+
+// function MiddleSection({ onToggleFavorite,onDownloadFiles,onFileClick,selectedFolder }) {
+//   const [searchTerm, setSearchTerm] = useState('');
+
+//   // const filteredFiles = filesData.filter(file =>
+//   //   file.name.toLowerCase().includes(searchTerm.toLowerCase())
+//   // );
+//   const filteredFiles = selectedFolder
+//   ? filesData.filter(file=>file.folderIds.includes(selectedFolder))
+//   : filesData.filter(file =>
+//        file.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+//   return (
+//     <div className="middle-section">
+//       {/* <Grid container spacing={2} alignItems="center">
+//         <Grid item xs={12}> */}
+//           <TextField
+//           style={{marginTop : "20 px"}}
+//             placeholder="Search files..."
+//             variant="outlined"
+//             fullWidth
+//             size='small'
+//             value={searchTerm}
+//             onChange={(e) => setSearchTerm(e.target.value)}
+//             InputProps={{
+//               startAdornment:(
+//                 <InputAdornment position='start'>
+//                   <SearchIcon />
+//                 </InputAdornment>
+//               ),
+//             }}
+//             InputLabelProps={{shrink: true}}
+//           />
+//         {/* </Grid>
+//       </Grid> */}
+//       <TableContainer component={Paper}>
+//         <Table stickyHeader>
+//           <TableHead>
+//             <TableRow>
+//               <TableCell>Name</TableCell>
+//               <TableCell>Date Uploaded</TableCell>
+//               <TableCell>Type</TableCell>
+//               <TableCell>Favorite</TableCell>
+//               <TableCell>Download</TableCell>
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {filteredFiles.map(file => (
+//               <TableRow key={file.id}>
+//                 <TableCell>
+//                   <span
+//                   className='clickable-file'
+//                   onClick={()=>onFileClick(file)}>{file.name}</span>
+//                 </TableCell>
+//                 <TableCell>{file.uploadDate}</TableCell>
+//                 <TableCell>{file.type}</TableCell>
+//                 <TableCell>
+//                   <IconButton onClick={()=>onToggleFavorite(file)}>
+//                     {file.isFavorite ? <FavoriteIcon color="secondary" /> : <FavoriteIcon />}
+//                   </IconButton>
+//                 </TableCell>
+//                 <TableCell>
+//                   <IconButton onClick={()=> onDownloadFiles(file)}>
+//                     <DownloadIcon/>
+//                   </IconButton>
+//                 </TableCell>
+//               </TableRow>
+//             ))}
+//           </TableBody>
+//         </Table>
+//       </TableContainer>
+//     </div>
+//   );
+// }
+
+// export default MiddleSection;
