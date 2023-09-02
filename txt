@@ -1,1450 +1,439 @@
-import * as React from "react";
-import { useState } from "react";
-import { styled, alpha } from "@mui/material/styles";
-import AppBar from "@mui/material/AppBar";
-import Popover from "@mui/material/Popover";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import InputBase from "@mui/material/InputBase";
-import Badge from "@mui/material/Badge";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import MoreIcon from "@mui/icons-material/MoreVert";
-import {
-  Autocomplete,
-  Paper,
-  TextField,
-  useScrollTrigger,
-} from "@mui/material";
-import { PropaneSharp } from "@mui/icons-material";
-
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-const top100Films = [
-  { label: "The Shawshank Redemption", year: 1994 },
-  { label: "The Godfather", year: 1972 },
-  { label: "The Godfather: Part II", year: 1974 },
-  { label: "The Dark Knight", year: 2008 },
-  { label: "12 Angry Men", year: 1957 },
-  { label: "Schindler's List", year: 1993 },
-  { label: "Pulp Fiction", year: 1994 },
-  {
-    label: "The Lord of the Rings: The Return of the King",
-    year: 2003,
-  },
-  { label: "The Good, the Bad and the Ugly", year: 1966 },
-  { label: "Fight Club", year: 1999 },
-  {
-    label: "The Lord of the Rings: The Fellowship of the Ring",
-    year: 2001,
-  },
-  {
-    label: "Star Wars: Episode V - The Empire Strikes Back",
-    year: 1980,
-  },
-  { label: "Forrest Gump", year: 1994 },
-  { label: "Inception", year: 2010 },
-  {
-    label: "The Lord of the Rings: The Two Towers",
-    year: 2002,
-  },
-  { label: "One Flew Over the Cuckoo's Nest", year: 1975 },
-  { label: "Goodfellas", year: 1990 },
-  { label: "The Matrix", year: 1999 },
-  { label: "Seven Samurai", year: 1954 },
-  {
-    label: "Star Wars: Episode IV - A New Hope",
-    year: 1977,
-  },
-  { label: "City of God", year: 2002 },
-  { label: "Se7en", year: 1995 },
-  { label: "The Silence of the Lambs", year: 1991 },
-  { label: "It's a Wonderful Life", year: 1946 },
-  { label: "Life Is Beautiful", year: 1997 },
-  { label: "The Usual Suspects", year: 1995 },
-  { label: "Léon: The Professional", year: 1994 },
-  { label: "Spirited Away", year: 2001 },
-  { label: "Saving Private Ryan", year: 1998 },
-  { label: "Once Upon a Time in the West", year: 1968 },
-  { label: "American History X", year: 1998 },
-  { label: "Interstellar", year: 2014 },
-  { label: "Casablanca", year: 1942 },
-  { label: "City Lights", year: 1931 },
-  { label: "Psycho", year: 1960 },
-  { label: "The Green Mile", year: 1999 },
-  { label: "The Intouchables", year: 2011 },
-  { label: "Modern Times", year: 1936 },
-  { label: "Raiders of the Lost Ark", year: 1981 },
-  { label: "Rear Window", year: 1954 },
-  { label: "The Pianist", year: 2002 },
-  { label: "The Departed", year: 2006 },
-  { label: "Terminator 2: Judgment Day", year: 1991 },
-  { label: "Back to the Future", year: 1985 },
-  { label: "Whiplash", year: 2014 },
-  { label: "Gladiator", year: 2000 },
-  { label: "Memento", year: 2000 },
-  { label: "The Prestige", year: 2006 },
-  { label: "The Lion King", year: 1994 },
-  { label: "Apocalypse Now", year: 1979 },
-  { label: "Alien", year: 1979 },
-  { label: "Sunset Boulevard", year: 1950 },
-  {
-    label:
-      "Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb",
-    year: 1964,
-  },
-  { label: "The Great Dictator", year: 1940 },
-  { label: "Cinema Paradiso", year: 1988 },
-  { label: "The Lives of Others", year: 2006 },
-  { label: "Grave of the Fireflies", year: 1988 },
-  { label: "Paths of Glory", year: 1957 },
-  { label: "Django Unchained", year: 2012 },
-  { label: "The Shining", year: 1980 },
-  { label: "WALL·E", year: 2008 },
-  { label: "American Beauty", year: 1999 },
-  { label: "The Dark Knight Rises", year: 2012 },
-  { label: "Princess Mononoke", year: 1997 },
-  { label: "Aliens", year: 1986 },
-  { label: "Oldboy", year: 2003 },
-  { label: "Once Upon a Time in America", year: 1984 },
-  { label: "Witness for the Prosecution", year: 1957 },
-  { label: "Das Boot", year: 1981 },
-  { label: "Citizen Kane", year: 1941 },
-  { label: "North by Northwest", year: 1959 },
-  { label: "Vertigo", year: 1958 },
-  {
-    label: "Star Wars: Episode VI - Return of the Jedi",
-    year: 1983,
-  },
-  { label: "Reservoir Dogs", year: 1992 },
-  { label: "Braveheart", year: 1995 },
-  { label: "M", year: 1931 },
-  { label: "Requiem for a Dream", year: 2000 },
-  { label: "Amélie", year: 2001 },
-  { label: "A Clockwork Orange", year: 1971 },
-  { label: "Like Stars on Earth", year: 2007 },
-  { label: "Taxi Driver", year: 1976 },
-  { label: "Lawrence of Arabia", year: 1962 },
-  { label: "Double Indemnity", year: 1944 },
-  {
-    label: "Eternal Sunshine of the Spotless Mind",
-    year: 2004,
-  },
-  { label: "Amadeus", year: 1984 },
-  { label: "To Kill a Mockingbird", year: 1962 },
-  { label: "Toy Story 3", year: 2010 },
-  { label: "Logan", year: 2017 },
-  { label: "Full Metal Jacket", year: 1987 },
-  { label: "Dangal", year: 2016 },
-  { label: "The Sting", year: 1973 },
-  { label: "2001: A Space Odyssey", year: 1968 },
-  { label: "Singin' in the Rain", year: 1952 },
-  { label: "Toy Story", year: 1995 },
-  { label: "Bicycle Thieves", year: 1948 },
-  { label: "The Kid", year: 1921 },
-  { label: "Inglourious Basterds", year: 2009 },
-  { label: "Snatch", year: 2000 },
-  { label: "3 Idiots", year: 2009 },
-  { label: "Monty Python and the Holy Grail", year: 1975 },
-];
-
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  color: "black",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  boxShadow: "0 0 10px lightgray",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
-
-export default function NavBar(props) {
-  const [notificationElement, setNotificationElement] = useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
-  // const isMenuOpen = Boolean(anchorEl);
-  // const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const handleProfileMenuOpen = (event) => {
-    //
-  };
-
-  const handleMobileMenuClose = () => {
-    // setMobileMoreAnchorEl(null);
-  };
-
-  const handleMenuClose = () => {
-    // setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
-  const handleMobileMenuOpen = (event) => {
-    // setMobileMoreAnchorEl(event.currentTarget);
-  };
-
-  const notificationHandler = (event) => {
-    setShowNotifications((prev) => !prev);
-    setNotificationElement(event.currentTarget);
-  };
-  const [showNotifications, setShowNotifications] = useState(false);
-  const notificationId = showNotifications ? "notification-popover" : "";
-
-  const menuId = "primary-search-account-menu";
-  const renderMenu = (
-    <Menu
-      // anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      // open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
-
-  const mobileMenuId = "primary-search-account-menu-mobile";
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      // open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
-    </Menu>
-  );
-
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar
-        position="static"
-        style={{ backgroundColor: "white", boxShadow: "none" }}
-      >
-        <Toolbar>
-          {/* <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
-            MUI
-          </Typography> */}
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Standard_Chartered_%282021%29.svg/2560px-Standard_Chartered_%282021%29.svg.png"
-            style={{ padding: "0.75rem 0.25rem" }}
-            id="login-logo-image"
-          />
-          {/* <h4 style={{ color: "black", marginLeft: "1rem" }}>RW Tool</h4> */}
-          {/* <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search> */}
-
-          {/* <Autocomplete /> */}
-          {/* <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={top100Films}
-            sx={{ width: 500 }}
-            renderInput={(params) => (
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  {...params}
-                  placeholder="Search…"
-                  inputProps={{ "aria-label": "search" }}
-                />
-              </Search>
-            )}
-          /> */}
-
-          <Autocomplete
-            disablePortal
-            freeSolo
-            id="combo-box-demo"
-            options={top100Films}
-            sx={{ width: 600 }}
-            style={{ marginLeft: "2rem" }}
-            renderInput={(params) => (
-              <TextField {...params} label="Search Report" />
-            )}
-          />
-
-          <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            {/* <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton> */}
-            <IconButton
-              id={notificationId}
-              size="large"
-              aria-label="show 17 new notifications"
-              color="black"
-              onClick={notificationHandler}
-            >
-              <Badge badgeContent={2} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <Popover
-              id={notificationId}
-              open={showNotifications}
-              anchorEl={notificationElement}
-              onClose={notificationHandler}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-            >
-              <>
-                <Paper
-                  style={{
-                    padding: "1rem",
-                    width: "400px",
-                    borderBottom: "1px solid lightgray",
-                  }}
-                >
-                  <p style={{ margin: "0", fontWeight: "600" }}>
-                    Notification heading
-                  </p>
-                  <p style={{ margin: "0", marginTop: "0.25rem" }}>
-                    New US Personal Report ready to be fetched
-                  </p>
-                </Paper>
-                <Paper
-                  style={{
-                    padding: "1rem",
-                    width: "400px",
-                    borderBottom: "1px solid lightgray",
-                  }}
-                >
-                  <p style={{ margin: "0", fontWeight: "600" }}>
-                    Notification heading
-                  </p>
-                  <p style={{ margin: "0", marginTop: "0.25rem" }}>
-                    New US Personal Report ready to be fetched
-                  </p>
-                </Paper>
-              </>
-            </Popover>
-
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={props.showProfile}
-              color="black"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
-    </Box>
-  );
-}
-
-import * as React from "react";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-
-export default function MediaCard(props) {
-  return (
-    <Card sx={{ maxWidth: 345 }} style={{ boxShadow: "0 0 10px lightgray" }}>
-      <CardMedia
-        sx={{ height: 140 }}
-        image="https://gadgetshelp.com/wp-content/uploads/images/lfw/e0c04fd360d01cea548063a0a5d18427.jpg"
-        // title="green iguana"
-      />
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          {props.report.title}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Small Description about report
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button size="medium" onClick={props.openAction}>
-          Open
-        </Button>
-      </CardActions>
-    </Card>
-  );
-}
-import { Paper, Breadcrumbs, Button, CircularProgress } from "@mui/material";
-import { emphasize, styled } from "@mui/material/styles";
-import Chip from "@mui/material/Chip";
-import HomeIcon from "@mui/icons-material/Home";
-
-import { useState } from "react";
-
-const StyledBreadcrumb = styled(Chip)(({ theme }) => {
-  const backgroundColor =
-    theme.palette.mode === "light"
-      ? theme.palette.grey[100]
-      : theme.palette.grey[800];
-  return {
-    backgroundColor,
-    height: theme.spacing(3),
-    cursor: "pointer",
-    color: theme.palette.text.primary,
-    fontWeight: theme.typography.fontWeightRegular,
-    "&:hover, &:focus": {
-      backgroundColor: emphasize(backgroundColor, 0.06),
-    },
-    "&:active": {
-      boxShadow: theme.shadows[1],
-      backgroundColor: emphasize(backgroundColor, 0.12),
-    },
-  };
-});
-
-function ReportViewer(props) {
-  const [loader, setLoader] = useState(true);
-  const handleIframeLoad = () => {
-    setLoader(false);
-  };
-  return (
-    <>
-      {loader ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            height: "70vh",
-            alignItems: "center",
-          }}
-        >
-          <CircularProgress />
-        </div>
-      ) : (
-        ""
-      )}
-      <div style={{ padding: "24px", display: loader ? "none" : "block" }}>
-        <section>
-          <Breadcrumbs aria-label="breadcrumb">
-            <StyledBreadcrumb
-              component="a"
-              label="Dashboard"
-              icon={<HomeIcon fontSize="small" />}
-              onClick={props.closeAction}
-            />
-            <StyledBreadcrumb component="a" label="Report Name" />
-            {/* <StyledBreadcrumb label="Accessories" /> */}
-          </Breadcrumbs>
-          <h3 style={{ marginTop: "1rem" }}>Report Title</h3>
-          <p style={{ marginTop: "1rem" }}>Description about the report</p>
-        </section>
-        <iframe
-          src="https://www.africau.edu/images/default/sample.pdf#toolbar=1"
-          style={{ width: "100%", height: "100vh" }}
-          onLoad={handleIframeLoad}
-        ></iframe>
-      </div>
-    </>
-  );
-}
-
-export default ReportViewer;
-import * as React from "react";
-import { styled } from "@mui/material/styles";
+import React, { useState } from "react";
+import File from "./File";
+import TextField from "@mui/material/TextField";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Button } from "@mui/material";
-
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import DownloadForOfflineIcon from "@mui/icons-material/DownloadForOffline";
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#005c84",
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-}));
-
-// function createData(name, calories, fat, carbs, protein) {
-//   return { name, calories, fat, carbs, protein };
-// }
-
-// const rows = [
-//   createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-//   createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-//   createData("Eclair", 262, 16.0, 24, 6.0),
-//   createData("Cupcake", 305, 3.7, 67, 4.3),
-//   createData("Gingerbread", 356, 16.0, 49, 3.9),
-// ];
-
-export default function CustomizedTables(props) {
-  return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Title</StyledTableCell>
-            <StyledTableCell align="right">Folder</StyledTableCell>
-            <StyledTableCell align="right">Type</StyledTableCell>
-            <StyledTableCell align="right">Date</StyledTableCell>
-            <StyledTableCell align="right"></StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {props.data.map((row) => (
-            <StyledTableRow>
-              <StyledTableCell component="th" scope="row">
-                {row.title}
-              </StyledTableCell>
-              <StyledTableCell align="right">{row.folder}</StyledTableCell>
-              <StyledTableCell align="right">{row.type}</StyledTableCell>
-              <StyledTableCell align="right">Date</StyledTableCell>
-              <StyledTableCell align="right">
-                <Button onClick={props.openAction}>
-                  <VisibilityIcon style={{ color: "#143ea" }} />
-                </Button>
-                <Button>
-                  <DownloadForOfflineIcon style={{ color: "#143ea" }} />
-                </Button>
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-}
-["AML", "Credit Risk", "General"]
-[
-  {
-    "title": "CIF Data Extract",
-    "type": "pdf",
-    "description": "",
-    "url": "https://www.africau.edu/images/default/sample.pdf",
-    "folder": "General",
-    "tags": ["recents"]
-  },
-  {
-    "title": "Monthly Periodic Review",
-    "type": "pdf",
-    "description": "",
-    "url": "https://www.africau.edu/images/default/sample.pdf",
-    "folder": "Credit Risk",
-    "tags": ["recents", "favourites"]
-  },
-  {
-    "title": "CIF US Indica Report",
-    "type": "pdf",
-    "description": "",
-    "url": "https://www.africau.edu/images/default/sample.pdf",
-    "folder": "Credit Risk",
-    "tags": ["favourites"]
-  },
-  {
-    "title": "US Person Report",
-    "type": "pdf",
-    "description": "",
-    "url": "https://www.africau.edu/images/default/sample.pdf",
-    "folder": "Credit Admin",
-    "tags": ["favourites"]
-  },
-  {
-    "title": "US Person Report",
-    "type": "pdf",
-    "description": "",
-    "url": "https://www.africau.edu/images/default/sample.pdf",
-    "folder": "General",
-    "tags": ["favourites"]
-  }
-]
-import {
-  TextField,
-  BottomNavigation,
-  BottomNavigationAction,
-} from "@mui/material";
-import { styled, emphasize } from "@material-ui/core";
-
-import RestoreIcon from "@mui/icons-material/Restore";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-
-import Profile from "../Profile/Profile";
-
-import "./dashboard.css";
-
-import Navbar from "../../Components/AppBar/Navbar";
+import IconButton from "@mui/material/IconButton";
+import Grid from "@mui/material/Grid";
+import DownloadIcon from "@mui/icons-material/CloudDownload";
 import {
-  Card,
-  Grow,
-  Zoom,
-  Fade,
-  Tab,
-  Tabs,
-  Skeleton,
-  Button,
-  Popover,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  ButtonGroup,
+  InputAdornment,
+  Pagination,
+  PaginationItem,
+  TablePagination,
+  Tooltip,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Breadcrumbs,
+  Typography,
 } from "@mui/material";
-
-import MediaCard from "../../Components/MediaCard/mediaCard";
-import Table from "../../Components/Table/Table";
-import ReportViewer from "../../Components/reportViewer/reportViewer";
-import { useState } from "react";
-import { useEffect } from "react";
-
-import { DateRange } from "react-date-range";
-
-import FolderIcon from "@mui/icons-material/Folder";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-
-import "react-date-range/dist/styles.css"; // main style file
-import "react-date-range/dist/theme/default.css"; // theme css file
-
-const reportData = require("../../data/reports.json");
-const folderData = require("../../data/folders.json");
-
-const CssTextField = styled(TextField)({
-  "& label.Mui-focused": {
-    color: "#3F9C35",
-  },
-  "& .MuiOutlinedInput-root": {
-    marginBottom: "1rem",
-    backgroundColor: "white",
-    "& fieldset": {
-      // boxShadow: "0 0 10px lightgray",
-      border: "1px solid #6D6E71",
-    },
-    "&:hover fieldset": {
-      borderColor: "#6D6E71",
-    },
-    "&.Mui-focused fieldset": {
-      border: "2px solid #3F9C35",
-      boxShadow: "none",
-    },
-  },
-});
-
-const StyledTab = styled(Tab)(({ theme }) => {
-  const backgroundColor =
-    theme.palette.mode === "light"
-      ? theme.palette.grey[100]
-      : theme.palette.grey[800];
-  return {
-    height: theme.spacing(3),
-    fontSize: "1rem",
-    cursor: "pointer",
-    // color: "#009fda !important",
-    fontWeight: theme.typography.fontWeightBold,
-    // padding: "12px 16px 12px 0",
-    "&:hover, &:focus": {
-      // color: "#009fda !important",
-      // backgroundColor: emphasize(backgroundColor, 0.06),
-    },
-    "&:active": {
-      boxShadow: theme.shadows[1],
-      color: "#0075b0 !important",
-    },
-  };
-});
-
-const seletedStyle = {
-  border: "1px solid #0473ea",
-  color: "#0473ea",
-};
-
-const normalStyle = {
-  border: "1px solid #6c757d",
-  color: "#6c757d",
-};
-
-export default function Dashboard() {
-  const [showReport, setShowReport] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("recents");
-  const [showPopper, setShowPopper] = useState(false);
-
-  const [filteredReports, setFilteredReports] = useState(reportData);
-
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [loader, setLoader] = useState(true);
-
-  const [showProfile, setShowProfile] = useState(false);
-
-  const showProfileHandler = () => {
-    setShowProfile(true);
-  };
-
-  const hideProfileHandler = () => {
-    setShowProfile(false);
-  };
-
-  const [selectionRange, setSelectionRange] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-    key: "selection",
-  });
-
-  const id = showPopper ? "date-popover" : undefined;
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoader(false);
-    }, 4500);
-  }, []);
-
-  const openReportView = () => {
-    setShowReport(true);
-  };
-
-  const closeReportView = () => {
-    setShowReport(false);
-  };
-
-  const handleTabChange = (event, value) => {
-    setSelectedTab(value);
-  };
-
-  const showDateRange = (event) => {
-    setAnchorEl(event.currentTarget);
-    setShowPopper((prev) => !prev);
-  };
-
-  const handleSelectRange = (ranges) => {
-    setSelectionRange(ranges.selection);
-  };
-
-  return (
-    <>
-      <Profile open={showProfile} closeAction={hideProfileHandler} />
-      <Navbar
-        showProfile={showProfileHandler}
-        // closeProfile={hideProfileHandler}
-      />
-      {!showReport ? (
-        <div style={{ padding: "24px" }}>
-          {/* <p
-            className="dashboard-headings"
-            style={{ marginBottom: "2rem", marginTop: "1rem" }}
-          >
-            My Reports
-          </p> */}
-          <Tabs
-            value={selectedTab}
-            onChange={handleTabChange}
-            textColor="secondary"
-            indicatorColor="secondary"
-            aria-label="secondary tabs example"
-            style={{ marginBottom: "1.5rem" }}
-          >
-            <StyledTab value="recents" label="Recents" style={{}} />
-            <StyledTab value="favourites" label="Favourites" />
-          </Tabs>
-
-          <div style={{ display: "flex", marginBottom: "4rem" }}>
-            {loader ? (
-              <>
-                <Skeleton
-                  variant="rectangular"
-                  width={300}
-                  height={300}
-                  style={{ marginRight: "1rem" }}
-                />
-                <Skeleton
-                  variant="rectangular"
-                  width={300}
-                  height={300}
-                  style={{ marginRight: "1rem" }}
-                />
-                <Skeleton
-                  variant="rectangular"
-                  width={300}
-                  height={300}
-                  style={{ marginRight: "1rem" }}
-                />
-                <Skeleton
-                  variant="rectangular"
-                  width={300}
-                  height={300}
-                  style={{ marginRight: "1rem" }}
-                />
-              </>
-            ) : (
-              <>
-                {reportData.map((report) =>
-                  report.tags.includes(selectedTab) ? (
-                    <Zoom in={true} {...(true ? { timeout: 500 } : {})}>
-                      <div
-                        style={{
-                          marginRight: "1rem",
-                          width: "300px",
-                          height: "300px",
-                        }}
-                      >
-                        <MediaCard
-                          openAction={openReportView}
-                          report={report}
-                        />
-                      </div>
-                    </Zoom>
-                  ) : (
-                    ""
-                  )
-                )}
-              </>
-            )}
-          </div>
-
-          <p className="dashboard-headings" style={{ marginTop: "2rem" }}>
-            Folders
-          </p>
-          <div style={{ display: "flex", marginBottom: "4rem" }}>
-            {loader ? (
-              <>
-                <Skeleton
-                  variant="rectangular"
-                  width={"10rem"}
-                  height={"5rem"}
-                  style={{ marginRight: "1rem" }}
-                />
-                <Skeleton
-                  variant="rectangular"
-                  width={"10rem"}
-                  height={"5rem"}
-                  style={{ marginRight: "1rem" }}
-                />
-                <Skeleton
-                  variant="rectangular"
-                  width={"10rem"}
-                  height={"5rem"}
-                  style={{ marginRight: "1rem" }}
-                />
-              </>
-            ) : (
-              <>
-                {folderData.map((folder) => {
-                  return (
-                    <Zoom in={true} {...(true ? { timeout: 500 } : {})}>
-                      <Card
-                        variant="outlined"
-                        style={{
-                          padding: "1.5rem",
-                          marginRight: "0.75rem",
-                          minWidth: "10rem",
-                          backgroundColor: "white",
-                          boxShadow: "0 0 10px lightgray",
-                          border: "none",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <div style={{ display: "flex" }}>
-                          <FolderIcon
-                            style={{ color: "#6D6E71", marginRight: "0.25rem" }}
-                          />
-                          <p style={{ margin: "0" }}>{folder}</p>
-                        </div>
-                      </Card>
-                    </Zoom>
-                  );
-                })}
-              </>
-            )}
-          </div>
-
-          <section>
-            <p
-              className="dashboard-headings"
-              style={{ marginTop: "2rem", fontSize: "1.2rem" }}
-            >
-              My Reports
-            </p>
-          </section>
-
-          <>
-            <div
-              style={{
-                display: "flex",
-                // justifyContent: "flex-end",
-                marginBottom: "1rem",
-              }}
-            >
-              <Button
-                aria-describedby={id}
-                variant="outlined"
-                onClick={showDateRange}
-                style={normalStyle}
-              >
-                Date <ArrowDropDownIcon />
-              </Button>
-              <Popover
-                id={id}
-                open={showPopper}
-                anchorEl={anchorEl}
-                onClose={showDateRange}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-              >
-                <DateRange
-                  ranges={[selectionRange]}
-                  onChange={handleSelectRange}
-                />
-              </Popover>
-
-              <FormControl style={{ width: 100, marginLeft: "1rem" }}>
-                <InputLabel id="filter-type">Type</InputLabel>
-                <Select
-                  labelId="filter-type"
-                  id="filter-type-select"
-                  // value={age}
-                  label="Type"
-                  // onChange={handleChange}
-                >
-                  <MenuItem value="PDF">PDF</MenuItem>
-                  <MenuItem value="XML">XML</MenuItem>
-                </Select>
-              </FormControl>
-            </div>
-          </>
-          {loader ? (
-            <Skeleton
-              variant="rectangular"
-              width={"100%"}
-              height={"20rem"}
-              style={{ marginRight: "1rem" }}
-            />
-          ) : (
-            <Table data={filteredReports} openAction={openReportView} />
-          )}
-        </div>
-      ) : (
-        <ReportViewer closeAction={closeReportView} />
-      )}
-    </>
-  );
-}
-import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom/cjs/react-router-dom";
-import "./login.css";
-import {
-  loadCaptchaEnginge,
-  LoadCanvasTemplate,
-  LoadCanvasTemplateNoReload,
-  validateCaptcha,
-} from "react-simple-captcha";
-
-import { TextField, Button, Tooltip, LinearProgress } from "@mui/material";
-import { styled } from "@material-ui/core";
-
-import PersonIcon from "@mui/icons-material/Person";
-
-const CssTextField = styled(TextField)({
-  "& label.Mui-focused": {
-    color: "#3F9C35",
-  },
-  "& .MuiOutlinedInput-root": {
-    marginBottom: "1rem",
-    backgroundColor: "white",
-    "& fieldset": {
-      // boxShadow: "0 0 10px lightgray",
-      border: "1px solid #6D6E71",
-    },
-    "&:hover fieldset": {
-      borderColor: "#6D6E71",
-    },
-    "&.Mui-focused fieldset": {
-      border: "2px solid #3F9C35",
-      boxShadow: "none",
-    },
-  },
-});
-
-function Login() {
-  const [userData, setUserData] = useState({ email: "", password: "" });
-  const [formState, setFormState] = useState("email");
-  const [localData, setLocalData] = useState({});
-  const [loader, setLoader] = useState(false);
-
-  const history = useHistory();
-
-  useEffect(() => {
-    if (formState === "password") {
-      loadCaptchaEnginge(6, "rgba(255, 255, 255, 0)");
-      // style fix for catptcha on initial render
-      let canvas = document.getElementById("canv");
-      canvas.style.height = "30px";
-      canvas.parentNode.style.display = "flex";
-      canvas.parentNode.style.alignItems = "center";
-      canvas.parentNode.style.justifyContent = "center";
-    }
-
-    // fetch from localstorage and setlocalstate and userData
-  }, [formState]);
-
-  const handleChange = (event) => {
-    setUserData({ ...userData, [event.target.name]: event.target.value });
-  };
-
-  const nextFormState = (event) => {
-    setLoader(true);
-    setTimeout(() => {
-      switch (formState) {
-        case "email":
-          setFormState("password");
-          break;
-        case "password":
-          history.push("/dashboard");
-          break;
-        default:
-          setFormState("email");
-      }
-      setLoader(false);
-    }, 2000);
-  };
-
-  const previousFormState = (event) => {
-    switch (formState) {
-      default:
-        setUserData({ ...userData, password: "" });
-        setFormState("email");
-    }
-  };
-
-  return (
-    <div className="login-container">
-      <div className="login-wrapper">
-        {loader ? <LinearProgress color="success" /> : ""}
-        <img
-          src="https://logowik.com/content/uploads/images/standard-chartered-bank-new-20211713.jpg"
-          id="login-logo-image"
-        />
-
-        <form id="login-form">
-          {formState === "email" ? (
-            <>
-              <p className="login-form-header">Welcome Back!</p>{" "}
-              {localData?.email ? (
-                <div style={{ display: "flex", margin: "0rem 0rem 1rem 0" }}>
-                  <PersonIcon style={{ marginRight: "0.5rem" }} />
-                  <p style={{ margin: "0" }}>{localData.email}</p>
-                </div>
-              ) : (
-                <CssTextField
-                  variant="outlined"
-                  label="Email"
-                  name="email"
-                  value={userData.email}
-                  required
-                  placeholder="Enter Email"
-                  onChange={handleChange}
-                />
-              )}
-            </>
-          ) : (
-            <>
-              <p className="account-header">
-                <PersonIcon style={{ margin: "0 0.25rem 0 0" }} />
-                {userData.email}
-              </p>
-              <CssTextField
-                variant="outlined"
-                label="Password"
-                name="password"
-                type="password"
-                required
-                placeholder="Enter Password"
-                onChange={handleChange}
-              />
-              <p id="forgot-password">Forgot Password ?</p>
-              <div id="captcha-wrapper">
-                <CssTextField
-                  variant="outlined"
-                  label="Captcha"
-                  required
-                  placeholder="Enter Captcha"
-                />
-                <LoadCanvasTemplate reloadText="<img alt='reload' id='reload-icon' src='https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Refresh_icon.svg/2048px-Refresh_icon.svg.png'/>" />
-              </div>
-            </>
-          )}
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: "0.75rem",
-            }}
-          >
-            {formState !== "email" ? (
-              <Button
-                variant="contained"
-                style={{ backgroundColor: "#939598", marginRight: "auto" }}
-                onClick={previousFormState}
-              >
-                Back
-              </Button>
-            ) : (
-              ""
-            )}
-
-            <Button
-              variant="contained"
-              style={{ backgroundColor: "#3F9C35" }}
-              onClick={nextFormState}
-              disabled={loader}
-            >
-              {formState === "password" ? "Login" : "Next"}
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-export default Login;
-import * as React from "react";
-import Box from "@mui/material/Box";
+import SearchIcon from "@mui/icons-material/Search";
+import filesData from "./files.json";
+import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
-import "./Profile.css";
+import Select from "@mui/material/Select";
+import { DateRangePicker } from "@mui/lab";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import DownloadForOfflineIcon from "@mui/icons-material/DownloadForOffline";
+import Autocomplete from "@mui/material/Autocomplete"
+import foldersData from "./folders.json"
 
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
+function MiddleSection({
+  files,
+  onToggleFavorite,
+  onDownloadFiles,
+  onFileClick,
+  clickedFileBreadcrumbs,
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 300,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+}) {
+  const itemsPerPage = 5;
+  const [page, setPage] = useState(1);
 
-const bull = (
-  <Box
-    component="span"
-    sx={{ display: "inline-block", mx: "2px", transform: "scale(0.8)" }}
-  >
-    •
-  </Box>
-);
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedFileType, setSelectedFileType] = useState("ALL");
+  const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-function NestedModal() {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleFileTypeChange = (event) => {
+    setSelectedFileType(event.target.value);
+  };
+
+  const handleDateRangeChange = (newValue) => {
+    setSelectedDateRange(newValue);
+  };
+  // const handleSearchTermChange = (event) => {
+  //   setSearchTerm(event.target.value);
+  // };
+  const handleSearchTermChange = (event,value) => {
+    setSearchTerm(value|| '');
+  };
+
+  const filteredFiles = files
+    .filter((file) => {
+      if (searchTerm === "") {
+        return true;
+      }
+
+      return file.name.toLowerCase().includes(searchTerm.toLowerCase());
+    })
+    .filter((file) => {
+      if (selectedFileType === "ALL") {
+        return true; // No filter applied
+      }
+      return file.type === selectedFileType;
+    })
+    .filter((file) => {
+      const uploadDate = new Date(file.uploadDate);
+      const startDate = selectedDateRange[0];
+      const endDate = selectedDateRange[1];
+
+      if (!startDate || !endDate) {
+        return true; // No filter applied
+      }
+
+      return uploadDate >= startDate && uploadDate <= endDate;
+    });
+
+  const pageCount = Math.ceil(filteredFiles.length / itemsPerPage);
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const visibleFiles = filteredFiles.slice(startIndex, endIndex);
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleFileClick = (file)=>{
+    const folderPath = file.path.substring(0,file.path.lastIndexOf("/"));
+
+    const folderNames = folderPath.split("/");
+    const breadcrumbs = {};
+    folderNames.forEach((folderName, index)=>{
+      breadcrumbs[index+1] = folderName;
+    });
+
+    breadcrumbs[file.id]= file.name;
+    setClickedFileBreadCrumbs(breadcrumbs);
+  }
+  const suggestions = [
+    ...new Set(files.map((file) => file.name.toLowerCase())), // Unique file names
+    ...new Set(foldersData.map((folder) => folder.name.toLowerCase())), // Unique folder names
+  ];
+
   return (
-    <div>
-      <Button
-        onClick={handleOpen}
-        type="button"
-        class="btn btn-primary btn-sm"
-        data-toggle="button"
-        aria-pressed="false"
-        autocomplete="off"
-      >
-        Change password
-      </Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Card sx={{ ...style, maxWidth: "30rem" }}>
-          <CardContent>
-            <TextField
-              id="outlined-basic"
-              label="Old password"
-              variant="outlined"
-            />
-            <br />
-            <br />
-            <TextField
-              id="outlined-basic"
-              label="New password"
-              variant="outlined"
-            />
-            <br />
-            <br />
-            <TextField
-              id="outlined-basic"
-              label="confirm password"
-              variant="outlined"
-            />
-            <br />
-            <br />
-            <Button
-              onClick={handleOpen}
-              type="button"
-              variant="contained"
-              data-toggle="button"
-              aria-pressed="false"
-              autocomplete="off"
-              sx={{
-                width: "100%",
-                backgroundColor: "rgb(13, 110, 253)",
-                color: "white",
-              }}
-            >
-              save
-            </Button>
-          </CardContent>
-        </Card>
-      </Modal>
+    <div className="middle-section">
+      <div>
+      {clickedFileBreadcrumbs && (
+        <Breadcrumbs aria-label="breadcrumb" >
+          {Object.entries(clickedFileBreadcrumbs).map(([fileId, breadcrumb], index) => (
+            <Typography key={index} color="textPrimary">
+              {breadcrumb}
+            </Typography>
+          ))}
+        </Breadcrumbs>
+      )}
     </div>
-  );
-}
-
-export default function Profile({ open, closeAction }) {
-  // const [open, setOpen] = React.useState(false);
-  // const handleOpen = () => setOpen(true);
-  // const handleClose = () => setOpen(false);
-  return (
-    <div>
-      {/* <Button onClick={handleOpen}>Open modal</Button> */}
-      <Modal
-        open={open}
-        onClose={closeAction}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+      {/* <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12}> */}
+      <Autocomplete
+        freeSolo
+        options={suggestions}
+        value={searchTerm}
+        onInputChange={handleSearchTermChange}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder="Search files and folders..."
+            variant="outlined"
+            fullWidth
+            size="small"
+            InputProps={{
+              ...params.InputProps,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        )}
+      />
+      {/* </Grid>
+      </Grid> */}
+        
+      <div
         style={{
           display: "flex",
-          justifyContent: "center",
           alignItems: "center",
+          justifyContent: "end",
+          marginTop: "8px",
+          marginBottom: "8px",
         }}
       >
-        {/* <div class="page-content page-container" id="page-content"> */}
-        <div class="col-xl-6 col-md-12">
-          <div class="card user-card-full">
-            <div class="row m-l-0 m-r-0">
-              <div class="col-sm-4 bg-c-lite-green user-profile">
-                <div class="card-block text-center text-white">
-                  <div class="m-b-25">
-                    <img
-                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIEAAACBCAMAAADQfiliAAAAMFBMVEXk5ueutLeqsLTq6+yyuLvAxcfT1tjY29y4vcDg4uPO0dPKztC8wcTn6end3+HQ1NXO0aCsAAAC2ElEQVR4nO2ayXbrIAxAGQ0YZP//39ZDkqYZsORI5Lx3uJssutCtEJOwUp1Op9PpdDqdTqfzXwLw97d5+JB9XCl+Ts0lAIaijb5ijPbBtoyvsr6Lf7FwQ7tEjO4x/E4MTRRAxdfx1zzkBgoQ3sZfFaK8wFiJv1XDJJuGI4GVJCow1IaggUK9Bm4I1kJyGAGtvVQpgMcJaDMIKaCKYEfGwKLjay2yMsGIT4HQfECW4YbE8oyciVccu4CCQhFYpgO7AXYtuFLYDyyEqbjDLYBejW4EZgNLHARtRu7ZQE0B++YwkQ0icykGsoFmNhjIAobZYP4XDZgr8fs5+H4d0OeCYzZIZAPu9eD7a6KNVIOZV0BBpu7OE7OBoh3SlkLkPygSt2f+exPxiGK4DygLE2kYRG6vlMOyzM2RkgSB68KCxSfBCDXV8Cc19hX5AnpVMuyr0U3BoxTMLNhOwyxLsm1NxCZtxLpIO4fVaKSq8MbBHdr4Bk3+UitH9tviK953dsWbyjeF5M2LPBidm4TfsMk/vrEYN6qmb02ghuK0uaCjD23jbw6QpjDmhTlM7cOvAmB/gaavfWCX/37OvkTntjFwLha/ZCItf5GPrlLIZa/8x5mwEPMgOiCgQo7u1US8F9mKUqSxbYN/88z4bOH5Hz/tlJ/yXpUwJTAWxZJ9WlN5l4gzV0lAeP/IeujAgJ2qe+GBgxs+3azXTeh0/N3hs4M70NtHz+RPyuHDBOyY0x8FAL2X/M5hPFUNMHMk4KJQzhiQ2zZV6Ld55PUID/U2bbkFqArsGaAq0Ft3KPC1gPvSgg7+PpVkBPDdJSA3cPEKqCd5oSLYDVArE72PT1FAjIMlP++SQExJtu3oNcePwcIp0IiHULky3Dn6NALz3dmHlINhOHEsJ2K+PAhHE5L4wc05qv1GyPIC9S2S/rXJCVx1c5DblO6oGSRnGlB9BLvvDYlRE+h0Op3Od/kBmOwiVrAapnoAAAAASUVORK5CYII="
-                      class="img-radius"
-                      alt="User-Profile-Image"
-                    />
-                  </div>
-                  <h6 class="f-w-600">Hembo Tingor</h6>
-                  <p>Occupation</p>
-                  <i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
+        <Button size="small" onClick={handleClickOpen}>
+          Filter By Date
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Filter by date"}
+            </DialogTitle>
+            <DialogContent>
+              <form style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label htmlFor="startDate">Start Date</label>
+                  <input
+                    style={{ padding: "3px", marginLeft: "1px" }}
+                    type="date"
+                    name="startDate"
+                    id="startDate"
+                  />
                 </div>
-              </div>
-              <div class="col-sm-8">
-                <div class="card-block">
-                  <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <p class="m-b-10 f-w-600">Email</p>
-                      <h6 class="text-muted f-w-400">rntng@gmail.com</h6>
-                    </div>
-                    <div class="col-sm-6">
-                      <p class="m-b-10 f-w-600">Phone</p>
-                      <h6 class="text-muted f-w-400">98979989898</h6>
-                    </div>
-                  </div>
-                  <br />
-                  <br />
-                  {/* <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">
-                          Projects
-                        </h6> */}
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <p class="m-b-10 f-w-600">Date of Birth</p>
-                      <h6 class="text-muted f-w-400">Sam Disuja</h6>
-                    </div>
-                    <div class="col-sm-6">
-                      <p class="m-b-10 f-w-600">Residence</p>
-                      <h6 class="text-muted f-w-400">Dinoter husainm</h6>
-                    </div>
-                  </div>
-                  <br />
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label style={{ marginLeft: "20px" }} htmlFor="startDate">
+                    End Date
+                  </label>
+                  <input
+                    style={{ padding: "3px", marginLeft: "1px" }}
+                    type="date"
+                    name="endDate"
+                    id="endDate"
+                  />
+                </div>
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleClose} autoFocus>
+                Submit
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Button>
 
-                  <NestedModal />
+        <div>
+          <Select
+            value={selectedFileType}
+            onChange={handleFileTypeChange}
+            style={{ height: "30px" }}
+          >
+            <MenuItem value="ALL">All</MenuItem>
+            <MenuItem value="PDF">PDF</MenuItem>
+            <MenuItem value="Word">Word</MenuItem>
+          </Select>
+
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Filter by date"}
+            </DialogTitle>
+            <DialogContent>
+              <form style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label htmlFor="startDate">Start Date</label>
+                  <input
+                    style={{ padding: "3px", marginLeft: "1px" }}
+                    type="date"
+                    name="startDate"
+                    id="startDate"
+                  />
                 </div>
-              </div>
-            </div>
-          </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label style={{ marginLeft: "20px" }} htmlFor="startDate">
+                    End Date
+                  </label>
+                  <input
+                    style={{ padding: "3px", marginLeft: "1px" }}
+                    type="date"
+                    name="endDate"
+                    id="endDate"
+                  />
+                </div>
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleClose} autoFocus>
+                Submit
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
-        {/* </div> */}
-      </Modal>
+        <Tooltip title="Download all files">
+          <IconButton>
+            <DownloadForOfflineIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
+      <TableContainer component={Paper}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Date Uploaded</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Favorite</TableCell>
+              <TableCell>Download</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {visibleFiles.map((file) => (
+              <TableRow key={file.id}>
+                <TableCell>
+                  <span
+                    className="clickable-file"
+                    onClick={() => onFileClick(file)}
+                  >
+                    {file.name}
+                  </span>
+                </TableCell>
+                <TableCell>{file.dateUploaded}</TableCell>
+                <TableCell>{file.type}</TableCell>
+                <TableCell>
+                  <Tooltip title="Add to Favorite">
+                    <IconButton onClick={() => onToggleFavorite(file)}>
+                      {file.isFavorite ? (
+                        <FavoriteIcon style={{ color: "green" }} />
+                      ) : (
+                        <FavoriteIcon />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
+                <TableCell>
+                  <Tooltip title="Download File">
+                    <IconButton onClick={() => onDownloadFiles(file)}>
+                      <DownloadIcon />
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Pagination
+        style={{ display: "flex", justifyContent: "center" }}
+        count={pageCount}
+        page={page}
+        onChange={handleChangePage}
+        renderItem={(item) => <PaginationItem component={Button} {...item} />}
+      />
     </div>
   );
 }
-import "./App.css";
-import Login from "./pages/Login/login";
-import Dashboard from "./pages/Dashboard/dashboard";
-import { Route, Switch } from "react-router-dom/cjs/react-router-dom";
-import { useState } from "react";
 
-import Profile from "./pages/Profile/Profile";
+export default MiddleSection;
 
-function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  return (
-    <>
-      <Switch>
-        <Route exact path="/dashboard" component={Dashboard} />
-        <Route exact path="/login" component={Login} />
-        <Route component={loggedIn ? Dashboard : Login} />
-      </Switch>
-    </>
-  );
-}
+// import React, { useState } from 'react';
+// import File from './File';
+// import TextField from '@mui/material/TextField';
+// import Table from '@mui/material/Table';
+// import TableBody from '@mui/material/TableBody';
+// import TableCell from '@mui/material/TableCell';
+// import TableContainer from '@mui/material/TableContainer';
+// import TableHead from '@mui/material/TableHead';
+// import TableRow from '@mui/material/TableRow';
+// import Paper from '@mui/material/Paper';
+// import FavoriteIcon from '@mui/icons-material/Favorite';
+// import IconButton from '@mui/material/IconButton';
+// import Grid from '@mui/material/Grid';
+// import DownloadIcon from '@mui/icons-material/CloudDownload';
+// import { InputAdornment } from '@mui/material';
+// import SearchIcon from '@mui/icons-material/Search';
+// import filesData from './files.json'
 
-export default App;
+// function MiddleSection({ onToggleFavorite,onDownloadFiles,onFileClick,selectedFolder }) {
+//   const [searchTerm, setSearchTerm] = useState('');
+
+//   // const filteredFiles = filesData.filter(file =>
+//   //   file.name.toLowerCase().includes(searchTerm.toLowerCase())
+//   // );
+//   const filteredFiles = selectedFolder
+//   ? filesData.filter(file=>file.folderIds.includes(selectedFolder))
+//   : filesData.filter(file =>
+//        file.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+//   return (
+//     <div className="middle-section">
+//       {/* <Grid container spacing={2} alignItems="center">
+//         <Grid item xs={12}> */}
+//           <TextField
+//           style={{marginTop : "20 px"}}
+//             placeholder="Search files..."
+//             variant="outlined"
+//             fullWidth
+//             size='small'
+//             value={searchTerm}
+//             onChange={(e) => setSearchTerm(e.target.value)}
+//             InputProps={{
+//               startAdornment:(
+//                 <InputAdornment position='start'>
+//                   <SearchIcon />
+//                 </InputAdornment>
+//               ),
+//             }}
+//             InputLabelProps={{shrink: true}}
+//           />
+//         {/* </Grid>
+//       </Grid> */}
+//       <TableContainer component={Paper}>
+//         <Table stickyHeader>
+//           <TableHead>
+//             <TableRow>
+//               <TableCell>Name</TableCell>
+//               <TableCell>Date Uploaded</TableCell>
+//               <TableCell>Type</TableCell>
+//               <TableCell>Favorite</TableCell>
+//               <TableCell>Download</TableCell>
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {filteredFiles.map(file => (
+//               <TableRow key={file.id}>
+//                 <TableCell>
+//                   <span
+//                   className='clickable-file'
+//                   onClick={()=>onFileClick(file)}>{file.name}</span>
+//                 </TableCell>
+//                 <TableCell>{file.uploadDate}</TableCell>
+//                 <TableCell>{file.type}</TableCell>
+//                 <TableCell>
+//                   <IconButton onClick={()=>onToggleFavorite(file)}>
+//                     {file.isFavorite ? <FavoriteIcon color="secondary" /> : <FavoriteIcon />}
+//                   </IconButton>
+//                 </TableCell>
+//                 <TableCell>
+//                   <IconButton onClick={()=> onDownloadFiles(file)}>
+//                     <DownloadIcon/>
+//                   </IconButton>
+//                 </TableCell>
+//               </TableRow>
+//             ))}
+//           </TableBody>
+//         </Table>
+//       </TableContainer>
+//     </div>
+//   );
+// }
+
+// export default MiddleSection;
