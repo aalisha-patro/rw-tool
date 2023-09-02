@@ -1,0 +1,82 @@
+package com.scb.axessspringboottraining.serviceImpl;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.scb.axessspringboottraining.entity.File;
+import com.scb.axessspringboottraining.entity.FolderPath;
+import com.scb.axessspringboottraining.repo.FileRepository;
+import com.scb.axessspringboottraining.service.FileService;
+
+@Service
+public class FileServiceImpl implements FileService{
+
+	@Autowired
+	private FileRepository repo;
+	
+	@Override
+	public File addFile(File file) {
+		return repo.save(file);
+
+	}
+
+	@Override
+	public List<File> getAllFiles() {
+		return repo.findAll();
+	}
+
+	@Override
+	public File getFileById(Long id) {
+		// TODO Auto-generated method stub
+		if(repo.findById(id).isPresent())return repo.findById(id).get();
+		else return null;
+	}
+
+	@Override
+	public File updateFile(File file, Long id) {
+		// TODO Auto-generated method stub
+		File old = repo.findById(id).get();
+		if(file.getName()!=null)old.setName(file.getName());
+		if(file.getType()!=null)old.setType(file.getType());
+		if(file.getDateUploaded()!=null)old.setDateUploaded(file.getDateUploaded());
+		if(file.getFolderPath()!=null)old.setFolderPath(file.getFolderPath());
+		return repo.save(old);
+	}
+
+	@Override
+	public boolean deleteById(Long id) {
+		if(repo.findById(id).isPresent()) {
+			repo.deleteById(id);
+			return true;
+		}else return false;
+	}
+
+	@Override
+	public List<File> getAllByFolderPath(FolderPath folderPath) {
+		return repo.getFilesByFolderPath(folderPath);
+	}
+
+	@Override
+	public List<File> filterByDate(FolderPath folderPath, Date start, Date end) {
+		return repo.findByFolderPathAndDateUploadedBetween(folderPath, start, end);
+	}
+
+//	@Override
+//	public List<File> getFileByUploadDate(Date dt) {
+//		if(repo.findAllFilesByUploadDate(dt) != Collections.EMPTY_LIST)return repo.findAllFilesByUploadDate(dt);
+//		else return Collections.emptyList();
+//	}
+//
+//	@Override
+//	public List<File> filterFilesByUploadDate(Date start, Date end) {
+//		if(repo.findAllFilesByUploadTimeBetween(start, end) != null)return repo.findAllFilesByUploadTimeBetween(start, end);
+//		else return Collections.emptyList();
+//	}
+
+	
+
+}
