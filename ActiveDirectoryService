@@ -1,0 +1,20 @@
+package com.scb.axessspringboottraining.service;
+
+import java.util.List;
+
+import com.scb.axessspringboottraining.entity.ActiveDirectory;
+import com.scb.axessspringboottraining.entity.FolderPath;
+import com.scb.axessspringboottraining.entity.User;
+
+public interface ActiveDirectoryService {
+//	addActiveDirectory, updateActiveDirectory, getallActiveDirectorys, getActiveDirectorybyId
+	public ActiveDirectory addActiveDirectory(ActiveDirectory ad);
+	public List<ActiveDirectory> getAllActiveDirectorys();
+	public ActiveDirectory getActiveDirectoryById(Long id);
+	public ActiveDirectory changeStatusById(Long id);
+	public ActiveDirectory updateActiveDirectory(ActiveDirectory ad, Long id);
+	public boolean deleteById(Long id);
+	public List<ActiveDirectory> getAllByUser(User user);
+	public List<ActiveDirectory> getAllByFolderPath(FolderPath folderPath);
+//	public ActiveDirectory updateActiveDirectory(ActiveDirectory ad, Long id); 
+}
