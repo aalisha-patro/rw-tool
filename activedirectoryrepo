@@ -1,0 +1,16 @@
+package com.scb.axessspringboottraining.repo;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.scb.axessspringboottraining.entity.ActiveDirectory;
+import com.scb.axessspringboottraining.entity.FolderPath;
+import com.scb.axessspringboottraining.entity.User;
+
+@Repository
+public interface ActiveDirectoryRepository extends JpaRepository<ActiveDirectory, Long>{
+	List<ActiveDirectory> getActiveDirectoriesByUsers(User user);
+	List<ActiveDirectory> getActiveDirectoriesByFolderPaths(FolderPath folderPath);
+}
