@@ -1,0 +1,22 @@
+package com.scb.axessspringboottraining.service;
+
+import java.util.List;
+
+import com.scb.axessspringboottraining.entity.ActiveDirectory;
+import com.scb.axessspringboottraining.entity.File;
+import com.scb.axessspringboottraining.entity.User;
+
+public interface UserService {
+
+//	addUser, updateUser, getallUsers, getUserbyId
+	public User addUser(User user);
+	public List<User> getAllUsers();
+	public User getUserById(Long id);
+	public boolean deleteById(Long id);
+	public User updateUser(User user, Long id);
+	public List<User> getAllByActiveDirectory(ActiveDirectory activeDirectory);
+	public User addToFavorites(File file, Long id);
+	public User addToRecents(File file, Long id);
+	public User addToDownloaded(File file, Long id);
+//	public User changeRoleById(Long id);
+}
