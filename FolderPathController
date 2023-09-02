@@ -1,0 +1,130 @@
+package com.scb.axessspringboottraining.controller;
+import java.util.Collections;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+//import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.scb.axessspringboottraining.config.APISuccessPayload;
+import com.scb.axessspringboottraining.entity.ActiveDirectory;
+import com.scb.axessspringboottraining.entity.FolderPath;
+import com.scb.axessspringboottraining.entity.User;
+import com.scb.axessspringboottraining.service.ActiveDirectoryService;
+import com.scb.axessspringboottraining.service.FolderPathService;
+
+@CrossOrigin(origins="*")
+@RestController
+@RequestMapping("/api/folderPath")
+public class FolderPathController {
+	@Autowired
+	FolderPathService folderPathService;
+	
+	@Autowired
+	ActiveDirectoryService activeDirectoryService;
+	
+	@PostMapping
+	public ResponseEntity<APISuccessPayload> addNewFolderPath(@RequestBody FolderPath folderPath) {
+		FolderPath newFolderPath=folderPathService.addFolderPath(folderPath);
+		APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+		aPISuccessPayload.setBody(newFolderPath);
+		aPISuccessPayload.setStatus(200);
+		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+		aPISuccessPayload.setSuccess(true);
+		aPISuccessPayload.setException(false);
+		aPISuccessPayload.setMessage("Folder Path Created");
+		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+		return response;	
+	}
+	@GetMapping
+	public ResponseEntity<APISuccessPayload> getAllFolderPaths(){
+		List<FolderPath> list = folderPathService.getAllFolderPaths();
+		APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+		aPISuccessPayload.setBody(list);
+		aPISuccessPayload.setStatus(200);
+		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+		aPISuccessPayload.setSuccess(true);
+		aPISuccessPayload.setException(false);
+		aPISuccessPayload.setMessage("Folder Paths Found");
+		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+        return response;
+	}
+	
+	@GetMapping("{id}")
+	public ResponseEntity<APISuccessPayload> getFolderPathById(@PathVariable Long id){
+		FolderPath found = folderPathService.getFolderPathById(id);
+		ResponseEntity<APISuccessPayload> response;
+		if(found != null) {
+			APISuccessPayload payload = APISuccessPayload.build(found, "Folder Path Found", HttpStatus.OK);
+			response = new ResponseEntity<APISuccessPayload>(payload,HttpStatus.OK);
+		}
+		else {
+			APISuccessPayload payload = APISuccessPayload.build(found, "Folder Path doesn't exist", HttpStatus.NOT_FOUND);
+			response = new ResponseEntity<APISuccessPayload>(payload,HttpStatus.OK);
+		}
+        return response;
+	}
+//	@DeleteMapping("{id}")
+//	public ResponseEntity<Object> deleteFolderPathById(@PathVariable Long id){
+////		User found = userService.getUserById(id);
+//		if(folderPathService.deleteById(id)) {
+//			return new ResponseEntity<Object>("FolderPath Deleted Successfully",HttpStatus.OK);
+//		}else return new ResponseEntity<Object>("FolderPath not available for given id to delete", HttpStatus.NOT_FOUND);
+//	}
+	@PutMapping("{id}")
+	public ResponseEntity<APISuccessPayload> updateFolderById(@RequestBody FolderPath fp, @PathVariable Long id){
+		FolderPath newFolderPath = folderPathService.updateFolderPath(fp, id);
+		APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+		aPISuccessPayload.setBody(newFolderPath);
+		aPISuccessPayload.setStatus(200);
+		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+		aPISuccessPayload.setSuccess(true);
+		aPISuccessPayload.setException(false);
+		aPISuccessPayload.setMessage("Folder path found to update");
+		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+        return response;	
+        
+	}
+	@GetMapping("{activeDirectoryId}/folderPaths")
+    public ResponseEntity<APISuccessPayload> getFolderPathssByActiveDirectory(@PathVariable Long activeDirectoryId){
+        
+		ActiveDirectory activeDirectory= activeDirectoryService.getActiveDirectoryById(activeDirectoryId);
+        if(activeDirectory!=null) {
+        	List<FolderPath> list = folderPathService.getAllByActiveDirectory(activeDirectory);
+    		APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+    		aPISuccessPayload.setBody(list);
+    		aPISuccessPayload.setStatus(200);
+    		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+    		aPISuccessPayload.setSuccess(true);
+    		aPISuccessPayload.setException(false);
+    		aPISuccessPayload.setMessage("Folder Paths in the required active directory Found");
+    		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+            return response;
+        }else {
+        	List<FolderPath> list = Collections.EMPTY_LIST;
+        	APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+    		aPISuccessPayload.setBody(list);
+    		aPISuccessPayload.setStatus(200);
+    		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+    		aPISuccessPayload.setSuccess(true);
+    		aPISuccessPayload.setException(false);
+    		aPISuccessPayload.setMessage("Required active directory doesn't exist");
+    		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+            return response;
+        }
+    }
+//	@PutMapping("{id}")
+//	public ResponseEntity<FolderPath> changeStatusById(@PathVariable Long id){
+//		return new ResponseEntity<FolderPath>(folderPathService.changeStatusById(id), HttpStatus.OK);
+//	}
+//
+}
