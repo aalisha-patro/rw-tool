@@ -10,6 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import IconButton from "@mui/material/IconButton";
+import Grid from "@mui/material/Grid";
 import DownloadIcon from "@mui/icons-material/CloudDownload";
 import {
   ButtonGroup,
@@ -37,10 +38,10 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DownloadForOfflineIcon from "@mui/icons-material/DownloadForOffline";
-import Autocomplete from "@mui/material/Autocomplete";
+import Autocomplete from "@mui/material/Autocomplete"
 import foldersData from "./folders.json";
-import jszip from "jszip"; // Import the jszip library
-import FileSaver from "file-saver"; // Import the file-saver library
+import jszip from "jszip";
+import FileSaver from "file-saver";
 
 function MiddleSection({
   files,
@@ -48,23 +49,103 @@ function MiddleSection({
   onDownloadFiles,
   onFileClick,
   clickedFileBreadcrumbs,
+
 }) {
-  // ... (other state variables and functions)
+  const itemsPerPage = 5;
+  const [page, setPage] = useState(1);
 
-  const [selectedFiles, setSelectedFiles] = useState([]); // State to store selected files
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedFileType, setSelectedFileType] = useState("ALL");
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
-  // Function to handle file selection
-  const handleFileSelection = (file) => {
-    const isSelected = selectedFiles.includes(file);
+  const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-    if (isSelected) {
-      setSelectedFiles(selectedFiles.filter((selectedFile) => selectedFile !== file));
-    } else {
-      setSelectedFiles([...selectedFiles, file]);
-    }
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  // Function to handle the download of selected files as a ZIP folder
+  const handleFileTypeChange = (event) => {
+    setSelectedFileType(event.target.value);
+  };
+
+  const handleDateRangeChange = (newValue) => {
+    setSelectedDateRange(newValue);
+  };
+  // const handleSearchTermChange = (event) => {
+  //   setSearchTerm(event.target.value);
+  // };
+  const handleSearchTermChange = (event,value) => {
+    setSearchTerm(value|| '');
+  };
+
+  const filteredFiles = files
+    .filter((file) => {
+      if (searchTerm === "") {
+        return true;
+      }
+
+      return file.name.toLowerCase().includes(searchTerm.toLowerCase());
+    })
+    .filter((file) => {
+      if (selectedFileType === "ALL") {
+        return true; // No filter applied
+      }
+      return file.type === selectedFileType;
+    })
+    .filter((file) => {
+      const uploadDate = new Date(file.uploadDate);
+      const startDate = selectedDateRange[0];
+      const endDate = selectedDateRange[1];
+
+      if (!startDate || !endDate) {
+        return true; // No filter applied
+      }
+
+      return uploadDate >= startDate && uploadDate <= endDate;
+    });
+
+  const pageCount = Math.ceil(filteredFiles.length / itemsPerPage);
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const visibleFiles = filteredFiles.slice(startIndex, endIndex);
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleFileClick = (file)=>{
+    const folderPath = file.path.substring(0,file.path.lastIndexOf("/"));
+
+    const folderNames = folderPath.split("/");
+    const breadcrumbs = {};
+    folderNames.forEach((folderName, index)=>{
+      breadcrumbs[index+1] = folderName;
+    });
+
+    breadcrumbs[file.id]= file.name;
+    setClickedFileBreadCrumbs(breadcrumbs);
+  }
+  const suggestions = [
+    ...new Set(files.map((file) => file.name.toLowerCase())), // Unique file names
+    ...new Set(foldersData.map((folder) => folder.name.toLowerCase())), // Unique folder names
+  ];
+
+  const handleFileSelection=(file)=>{
+    const isSelected = selectedFiles.includes(file);
+    if (isSelected){
+      setSelectedFiles(selectedFiles.filter((selectedFile)=>selectedFile !==file));
+    }
+    else{
+      setSelectedFiles([...selectedFiles,file]);
+    }
+  };
   const handleDownloadSelectedFiles = () => {
     if (selectedFiles.length === 0) {
       // No files are selected, so do nothing
@@ -87,15 +168,217 @@ function MiddleSection({
     });
   };
 
+
   return (
     <div className="middle-section">
-      {/* ... (other code) */}
-      <Button variant="contained" onClick={handleDownloadSelectedFiles}>
-        Download Selected Files as ZIP
-      </Button>
-      {/* ... (other code) */}
+      <div>
+      {clickedFileBreadcrumbs && (
+        <Breadcrumbs aria-label="breadcrumb" >
+          {Object.entries(clickedFileBreadcrumbs).map(([fileId, breadcrumb], index) => (
+            <Typography key={index} color="textPrimary">
+              {breadcrumb}
+            </Typography>
+          ))}
+        </Breadcrumbs>
+      )}
+    </div>
+      {/* <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12}> */}
+      <Autocomplete
+        freeSolo
+        options={suggestions}
+        value={searchTerm}
+        onInputChange={handleSearchTermChange}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder="Search files and folders..."
+            variant="outlined"
+            fullWidth
+            size="small"
+            InputProps={{
+              ...params.InputProps,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        )}
+      />
+      {/* </Grid>
+      </Grid> */}
+        
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "end",
+          marginTop: "8px",
+          marginBottom: "8px",
+        }}
+      >
+        <Button size="small" onClick={handleClickOpen}>
+          Filter By Date
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Filter by date"}
+            </DialogTitle>
+            <DialogContent>
+              <form style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label htmlFor="startDate">Start Date</label>
+                  <input
+                    style={{ padding: "3px", marginLeft: "1px" }}
+                    type="date"
+                    name="startDate"
+                    id="startDate"
+                  />
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label style={{ marginLeft: "20px" }} htmlFor="startDate">
+                    End Date
+                  </label>
+                  <input
+                    style={{ padding: "3px", marginLeft: "1px" }}
+                    type="date"
+                    name="endDate"
+                    id="endDate"
+                  />
+                </div>
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleClose} autoFocus>
+                Submit
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Button>
+
+        <div>
+          <Select
+            value={selectedFileType}
+            onChange={handleFileTypeChange}
+            style={{ height: "30px" }}
+          >
+            <MenuItem value="ALL">All</MenuItem>
+            <MenuItem value="PDF">PDF</MenuItem>
+            <MenuItem value="Word">Word</MenuItem>
+          </Select>
+
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Filter by date"}
+            </DialogTitle>
+            <DialogContent>
+              <form style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label htmlFor="startDate">Start Date</label>
+                  <input
+                    style={{ padding: "3px", marginLeft: "1px" }}
+                    type="date"
+                    name="startDate"
+                    id="startDate"
+                  />
+                </div>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label style={{ marginLeft: "20px" }} htmlFor="startDate">
+                    End Date
+                  </label>
+                  <input
+                    style={{ padding: "3px", marginLeft: "1px" }}
+                    type="date"
+                    name="endDate"
+                    id="endDate"
+                  />
+                </div>
+              </form>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleClose} autoFocus>
+                Submit
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+        <Tooltip title="Download all files">
+          <IconButton onClick={handleDownloadSelectedFiles}>
+            <DownloadForOfflineIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
+      <TableContainer component={Paper}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Date Uploaded</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Favorite</TableCell>
+              <TableCell>Download</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {visibleFiles.map((file) => (
+              <TableRow key={file.id}>
+                <TableCell>
+                  <span
+                    className="clickable-file"
+                    onClick={() => onFileClick(file)}
+                  >
+                    {file.name}
+                  </span>
+                </TableCell>
+                <TableCell>{file.dateUploaded}</TableCell>
+                <TableCell>{file.type}</TableCell>
+                <TableCell>
+                  <Tooltip title="Add to Favorite">
+                    <IconButton onClick={() => onToggleFavorite(file)}>
+                      {file.isFavorite ? (
+                        <FavoriteIcon style={{ color: "green" }} />
+                      ) : (
+                        <FavoriteIcon />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
+                <TableCell>
+                  <Tooltip title="Download File">
+                    <IconButton onClick={() => onDownloadFiles(file)}>
+                      <DownloadIcon />
+                    </IconButton>
+                  </Tooltip>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Pagination
+        style={{ display: "flex", justifyContent: "center" }}
+        count={pageCount}
+        page={page}
+        onChange={handleChangePage}
+        renderItem={(item) => <PaginationItem component={Button} {...item} />}
+      />
     </div>
   );
 }
 
 export default MiddleSection;
+
+
