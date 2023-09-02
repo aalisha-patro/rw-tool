@@ -1,0 +1,61 @@
+package com.scb.axessspringboottraining.entity;
+
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name = "folder_path_table")
+public class FolderPath {
+//	  @Column(name="folder_path_id")
+	@Id //primary key
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long folder_path_id;
+    private String path;
+    
+    @OneToMany(mappedBy = "folderPath",
+			cascade = CascadeType.ALL,
+			orphanRemoval = true)
+	@JsonIgnore
+	private List<File> files;
+    
+    @ManyToMany(mappedBy = "folderPaths",
+			cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<ActiveDirectory> activeDirectories;
+    
+	public Long getFolder_path_id() {
+		return folder_path_id;
+	}
+	public void setFolder_path_id(Long folder_path_id) {
+		this.folder_path_id = folder_path_id;
+	}
+	public String getPath() {
+		return path;
+	}
+	public void setPath(String path) {
+		this.path = path;
+	}
+	public List<File> getFiles() {
+		return files;
+	}
+	public void setFiles(List<File> files) {
+		this.files = files;
+	}
+	public List<ActiveDirectory> getActiveDirectories() {
+		return activeDirectories;
+	}
+	public void setActiveDirectories(List<ActiveDirectory> activeDirectories) {
+		this.activeDirectories = activeDirectories;
+	}
+}
