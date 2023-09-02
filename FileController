@@ -1,0 +1,178 @@
+package com.scb.axessspringboottraining.controller;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.scb.axessspringboottraining.config.APISuccessPayload;
+import com.scb.axessspringboottraining.entity.File;
+import com.scb.axessspringboottraining.entity.FolderPath;
+import com.scb.axessspringboottraining.service.FileService;
+import com.scb.axessspringboottraining.service.FolderPathService;
+
+@CrossOrigin(origins="*")
+@RestController
+@RequestMapping("/api/file")
+public class FileController {
+	@Autowired
+	FileService fileService;
+	@Autowired
+	FolderPathService folderPathService;
+	@PostMapping
+	public ResponseEntity<APISuccessPayload> addNewFile(@RequestBody File file) {
+		File newFile=fileService.addFile(file);
+		APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+		aPISuccessPayload.setBody(newFile);
+		aPISuccessPayload.setStatus(200);
+		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+		aPISuccessPayload.setSuccess(true);
+		aPISuccessPayload.setException(false);
+		aPISuccessPayload.setMessage("File Created");
+		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+		return response;
+	}
+	@GetMapping
+	public ResponseEntity<APISuccessPayload> getAllFiles(){
+		List<File> list = fileService.getAllFiles();
+		APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+		aPISuccessPayload.setBody(list);
+		aPISuccessPayload.setStatus(200);
+		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+		aPISuccessPayload.setSuccess(true);
+		aPISuccessPayload.setException(false);
+		aPISuccessPayload.setMessage("Files Found");
+		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+        return response;	
+    }
+//	@GetMapping("/uploadedat")
+//	public ResponseEntity<List<File>> getFilesByUploadDateBetween(@RequestParam Date startDate,
+//																@RequestParam Date endDate) {
+//		return new ResponseEntity<List<File>>(fileService.filterFilesByUploadDate(startDate, endDate), HttpStatus.OK);
+//	}
+//	@GetMapping("/createdat")
+//	public ResponseEntity<List<File>> getFilesByUploadDate(@RequestParam Date date) {
+//		return new ResponseEntity<List<File>>(fileService.getFileByUploadDate(date), HttpStatus.OK);
+//	}
+	@GetMapping("{id}")
+	public ResponseEntity<APISuccessPayload> getFileById(@PathVariable Long id){
+		File found = fileService.getFileById(id);
+		ResponseEntity<APISuccessPayload> response;
+		if(found != null) {
+			APISuccessPayload payload = APISuccessPayload.build(found, "File Found", HttpStatus.OK);
+			response = new ResponseEntity<APISuccessPayload>(payload,HttpStatus.OK);
+		}
+		else {
+			APISuccessPayload payload = APISuccessPayload.build(found, "File doesn't exist", HttpStatus.NOT_FOUND);
+			response = new ResponseEntity<APISuccessPayload>(payload,HttpStatus.OK);
+		}
+        return response;
+	}
+	@DeleteMapping("{id}")
+	public ResponseEntity<APISuccessPayload> deleteFileById(@PathVariable Long id){
+//		User found = userService.getUserById(id);
+		boolean deleted = fileService.deleteById(id);
+		APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+		aPISuccessPayload.setBody(deleted);
+		aPISuccessPayload.setStatus(200);
+		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+		aPISuccessPayload.setSuccess(true);
+		aPISuccessPayload.setException(false);
+		aPISuccessPayload.setMessage("File successfully Deleted");
+		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+        return response;
+    }
+	@PutMapping("{id}")
+	public ResponseEntity<APISuccessPayload> updateFileById(@RequestBody File fl, @PathVariable Long id){
+		File newFile = fileService.updateFile(fl, id);
+		APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+		aPISuccessPayload.setBody(newFile);
+		aPISuccessPayload.setStatus(200);
+		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+		aPISuccessPayload.setSuccess(true);
+		aPISuccessPayload.setException(false);
+		aPISuccessPayload.setMessage("File Found");
+		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+        return response;	
+    }
+//	@PutMapping("{id}")
+//	public ResponseEntity<File> changeStatusById(@PathVariable Long id){
+//		return new ResponseEntity<File>(fileService.changeStatusById(id), HttpStatus.OK);
+//	}
+	@GetMapping("{folderPathId}/files")
+    public ResponseEntity<APISuccessPayload> getFilesBycategory(@PathVariable Long folderPathId){
+        
+		FolderPath folderPath= folderPathService.getFolderPathById(folderPathId);
+        if(folderPath!=null) {
+        	List<File> list = fileService.getAllByFolderPath(folderPath);
+    		APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+    		aPISuccessPayload.setBody(list);
+    		aPISuccessPayload.setStatus(200);
+    		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+    		aPISuccessPayload.setSuccess(true);
+    		aPISuccessPayload.setException(false);
+    		aPISuccessPayload.setMessage("Files in the required folder path Found");
+    		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+            return response;
+        }else {
+        	List<File> list = Collections.EMPTY_LIST;
+        	APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+    		aPISuccessPayload.setBody(list);
+    		aPISuccessPayload.setStatus(200);
+    		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+    		aPISuccessPayload.setSuccess(true);
+    		aPISuccessPayload.setException(false);
+    		aPISuccessPayload.setMessage("Required folder path doesn't exist");
+    		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+            return response;
+        }
+    }
+	@GetMapping("{folderPathId}/{startDate}/to/{endDate}/files")
+    public ResponseEntity<APISuccessPayload> getFilesBycategory(@PathVariable Long folderPathId, 
+    		@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate, 
+    		@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate){
+        
+		FolderPath folderPath= folderPathService.getFolderPathById(folderPathId);
+        if(folderPath!=null) {
+        	List<File> list = fileService.filterByDate(folderPath, startDate, endDate);
+    		APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+    		if(list!=null){
+    			aPISuccessPayload.setBody(list);
+    			aPISuccessPayload.setMessage("Files in the required folder path filtered by date");
+    		}
+    		else {
+    			aPISuccessPayload.setBody(null);
+    			aPISuccessPayload.setMessage("No files found in the required folder path filtered by date");
+    		}
+    		aPISuccessPayload.setStatus(200);
+    		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+    		aPISuccessPayload.setSuccess(true);
+    		aPISuccessPayload.setException(false);
+    		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+            return response;
+        }else {
+        	List<File> list = Collections.EMPTY_LIST;
+        	APISuccessPayload aPISuccessPayload= new APISuccessPayload();
+    		aPISuccessPayload.setBody(list);
+    		aPISuccessPayload.setStatus(200);
+    		aPISuccessPayload.setHttpStatus(String.valueOf(HttpStatus.OK));
+    		aPISuccessPayload.setSuccess(true);
+    		aPISuccessPayload.setException(false);
+    		aPISuccessPayload.setMessage("Required folder path doesn't exist");
+    		ResponseEntity<APISuccessPayload> response = new ResponseEntity<APISuccessPayload>(aPISuccessPayload,HttpStatus.OK);
+            return response;
+        }
+	}
+}
