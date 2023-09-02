@@ -1,0 +1,131 @@
+package com.scb.axessspringboottraining.serviceImpl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.scb.axessspringboottraining.entity.ActiveDirectory;
+import com.scb.axessspringboottraining.entity.File;
+import com.scb.axessspringboottraining.entity.FolderPath;
+import com.scb.axessspringboottraining.entity.User;
+import com.scb.axessspringboottraining.repo.UserRepository;
+import com.scb.axessspringboottraining.service.UserService;
+
+@Service
+public class UserServiceImpl implements UserService{
+	
+	@Autowired
+	private UserRepository repo;
+
+	@Override
+	public User addUser(User user) {
+		return repo.save(user);
+	}
+
+	@Override
+	public List<User> getAllUsers() {
+		return repo.findAll();
+	}
+
+	@Override
+	public User getUserById(Long id) {
+		// TODO Auto-generated method stub
+		if(repo.findById(id).isPresent())return repo.findById(id).get();
+		else return null;
+	}
+
+	@Override
+	public User updateUser(User user, Long id) {
+		// TODO Auto-generated method stub
+		boolean role = false;
+		if(user.getRole().equals("Admin")) {role=true;}
+		else if(user.getRole().equals("Ops")) {role=false;}
+		User old = repo.findById(id).get();
+		if(user.getName()!=null)old.setName(user.getName());
+		if(user.getRole()!=null)old.setRole(role);
+		if(user.getActiveDirectories()!=null)old.setActiveDirectories(user.getActiveDirectories());
+		return repo.save(old);
+	}
+
+	@Override
+	public boolean deleteById(Long id) {
+		if(repo.findById(id).isPresent()) {
+			repo.deleteById(id);
+			return true;
+		}else return false;
+	}
+
+	@Override
+	public List<User> getAllByActiveDirectory(ActiveDirectory activeDirectory) {
+		// TODO Auto-generated method stub
+		return repo.getUsersByActiveDirectories(activeDirectory);
+	}
+
+	@Override
+	public User addToFavorites(File file, Long id) {
+		// TODO Auto-generated method stub
+		User old = repo.findById(id).get();
+		List<ActiveDirectory> lsdir = old.getActiveDirectories();
+		for(ActiveDirectory dir: lsdir) {
+			List<FolderPath> lspath = dir.getFolderPaths();
+			for(FolderPath path: lspath) {
+				List<File> lsfile = path.getFiles();
+				if(!(lsfile.contains(file))) return null;
+			}
+		}
+		List<File> favoriteFiles = old.getFavoriteFiles();
+		favoriteFiles.add(file);
+		old.setFavoriteFiles(favoriteFiles);
+		return repo.save(old);
+	}
+
+	@Override
+	public User addToRecents(File file, Long id) {
+		// TODO Auto-generated method stub
+		User old = repo.findById(id).get();
+		List<ActiveDirectory> lsdir = old.getActiveDirectories();
+		for(ActiveDirectory dir: lsdir) {
+			List<FolderPath> lspath = dir.getFolderPaths();
+			for(FolderPath path: lspath) {
+				List<File> lsfile = path.getFiles();
+				if(!(lsfile.contains(file))) return null;
+			}
+		}
+		List<File> recentFiles = old.getRecentFiles();
+		recentFiles.add(file);
+		old.setRecentFiles(recentFiles);
+		return repo.save(old);
+	}
+
+	@Override
+	public User addToDownloaded(File file, Long id) {
+		// TODO Auto-generated method stub
+		User old = repo.findById(id).get();
+		List<ActiveDirectory> lsdir = old.getActiveDirectories();
+		for(ActiveDirectory dir: lsdir) {
+			List<FolderPath> lspath = dir.getFolderPaths();
+			for(FolderPath path: lspath) {
+				List<File> lsfile = path.getFiles();
+				if(!(lsfile.contains(file))) return null;
+			}
+		}
+		List<File> downloadedFiles = old.getDownloadedFiles();
+		downloadedFiles.add(file);
+		old.setDownloadedFiles(downloadedFiles);
+		return repo.save(old);
+	}
+
+	
+
+//	@Override
+//	public User changeRoleById(Long id) {
+//		if(repo.findById(id).isPresent()) {
+//			User u = repo.findById(id).get();
+//			boolean current_role = u.getRole();
+//			u.setRole(!current_role);
+//			return u;
+//		}else return null;
+//	}
+
+}
