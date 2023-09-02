@@ -1,1 +1,83 @@
+package com.scb.axessspringboottraining.entity;
+
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "user_table")
+public class User {
+    @Id //primary key
+    @Column(name="user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long user_id;
+    private String name;
+    private boolean role; // 0 for Ops User and 1 for Admin User
+    
+    @ManyToMany()
+    List<ActiveDirectory> activeDirectories;
+    
+    @ManyToMany
+    @JoinTable(name = "User_favorites_table")
+    List<File> favoriteFiles;
+    
+    @ManyToMany
+    @JoinTable(name = "User_recents_table")
+    List<File> recentFiles;
+    
+    @ManyToMany
+    @JoinTable(name = "User_downloads_table")
+    List<File> downloadedFiles;
+    
+	public Long getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(Long user_id) {
+		this.user_id = user_id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getRole() {
+		if(role==true) {return "Admin" ;}
+		else {return "Ops";}
+	}
+	public void setRole(boolean role) {
+		this.role = role;
+	}
+	public List<ActiveDirectory> getActiveDirectories() {
+		return activeDirectories;
+	}
+	public void setActiveDirectories(List<ActiveDirectory> activeDirectories) {
+		this.activeDirectories = activeDirectories;
+	}
+	public List<File> getFavoriteFiles() {
+		return favoriteFiles;
+	}
+	public void setFavoriteFiles(List<File> favoriteFiles) {
+		this.favoriteFiles = favoriteFiles;
+	}
+	public List<File> getRecentFiles() {
+		return recentFiles;
+	}
+	public void setRecentFiles(List<File> recentFiles) {
+		this.recentFiles = recentFiles;
+	}
+	public List<File> getDownloadedFiles() {
+		return downloadedFiles;
+	}
+	public void setDownloadedFiles(List<File> downloadedFiles) {
+		this.downloadedFiles = downloadedFiles;
+	}    
+}
 
